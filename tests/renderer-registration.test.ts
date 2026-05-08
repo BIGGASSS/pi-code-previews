@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "vitest";
+import { test, vi } from "vitest";
 import { registerToolRenderers } from "../src/renderers.ts";
 import { defaultCodePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
 import type { CodePreviewToolName } from "../src/tool-names.ts";
@@ -175,12 +175,13 @@ test("registered renderers can use a self shell when tool backgrounds are disabl
   }
 });
 
-test("border mode puts hidden output expand hints in the bottom-left border", () => {
+test("border mode puts hidden output expand hints beside timing in the bottom-right border", () => {
   process.env.CODE_PREVIEW_TOOLS = "bash";
   setCodePreviewSettings({
     ...defaultCodePreviewSettings,
     toolCallBackground: "border",
     bashResultPreview: false,
+    toolCallTiming: true,
   });
   try {
     const bash = findRenderer(registerRenderers(), "bash");
@@ -193,29 +194,33 @@ test("border mode puts hidden output expand hints in the bottom-left border", ()
       args: { command: "echo hidden" },
       argsComplete: true,
       cwd: "/tmp/project",
-      executionStarted: false,
+      executionStarted: true,
       expanded: false,
       invalidate: () => undefined,
       isError: false,
-      isPartial: false,
+      isPartial: true,
       lastComponent: undefined,
       showImages: true,
       state,
       toolCallId: "tool-1",
     };
+    vi.spyOn(Date, "now").mockReturnValue(1_000);
     const call = bash.renderCall(context.args, theme, context);
+    vi.mocked(Date.now).mockReturnValue(4_000);
     const result = bash.renderResult(
       { content: [{ type: "text", text: "hidden output" }], details: {} },
       { expanded: false, isPartial: false },
       theme,
-      context,
+      { ...context, isPartial: false },
     );
 
     assert.equal(stripAnsi(renderComponent(result, 72)), "");
     const rendered = stripAnsi(renderComponent(call, 72));
-    assert.doesNotMatch(rendered, /│ .*output hidden/);
-    assert.match(rendered, /╰ output hidden - .*expand .+╯$/);
+    assert.doesNotMatch(rendered, /│ .*expand/);
+    assert.match(rendered, /╰─+ .*expand - 3\.0s ╯$/);
+    assert.doesNotMatch(rendered, /output hidden/);
   } finally {
+    vi.restoreAllMocks();
     setCodePreviewSettings(defaultCodePreviewSettings);
   }
 });

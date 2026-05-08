@@ -132,7 +132,7 @@ export function themedKeyHint(
 }
 
 export function hiddenPreviewExpandLabel(theme: Theme): string {
-  return `${theme.fg("muted", "output hidden - ")}${themedKeyHint(theme, "app.tools.expand", "expand")}`;
+  return themedKeyHint(theme, "app.tools.expand", "expand");
 }
 
 export function hiddenPreviewExpandHint(theme: Theme): string {

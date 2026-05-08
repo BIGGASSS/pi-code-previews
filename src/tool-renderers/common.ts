@@ -119,7 +119,7 @@ function renderCodePreviewCall<TState, TArgs>(
   state.codePreviewBorderCallComponent = callComponent;
   const shell = reuseShell ? previousShell : new BorderedToolCall(theme, state);
   shell.setBorderColor(borderColorKey(context));
-  shell.setLeftLabel(getBorderLeftLabel(state));
+  shell.setExpandLabel(getBorderExpandLabel(state));
   shell.setTimingLabel(timing?.label);
   if (!reusedCall || !reuseShell) shell.setCall(callComponent);
   if (!timingOnly || !reuseShell) shell.setResult(state.codePreviewBorderResultComponent);
@@ -153,13 +153,13 @@ function renderCodePreviewResult<TState, TArgs>(
     state.codePreviewBorderTheme === theme
   ) {
     state.codePreviewBorderShell.setBorderColor(borderColorKey(context));
-    state.codePreviewBorderShell.setLeftLabel(getBorderLeftLabel(state));
+    state.codePreviewBorderShell.setExpandLabel(getBorderExpandLabel(state));
     state.codePreviewBorderShell.setTimingLabel(timing?.label);
     if (!reusedResult) state.codePreviewBorderShell.setResult(resultComponent);
   } else {
     const shell = new BorderedToolCall(theme, state);
     shell.setBorderColor(borderColorKey(context));
-    shell.setLeftLabel(getBorderLeftLabel(state));
+    shell.setExpandLabel(getBorderExpandLabel(state));
     shell.setTimingLabel(timing?.label);
     shell.setCall(state.codePreviewBorderCallComponent);
     shell.setResult(resultComponent);
@@ -308,8 +308,8 @@ type BorderState = Record<string, unknown> & {
   codePreviewBorderShell?: BorderedToolCall;
   codePreviewBorderTheme?: Theme;
   codePreviewBorderCurrentSlot?: BorderSlot;
-  codePreviewBorderCallLeftLabel?: string;
-  codePreviewBorderResultLeftLabel?: string;
+  codePreviewBorderCallExpandLabel?: string;
+  codePreviewBorderResultExpandLabel?: string;
 };
 
 function borderState<TState, TArgs>(context: PreviewRenderContext<TState, TArgs>): BorderState {
@@ -319,8 +319,8 @@ function borderState<TState, TArgs>(context: PreviewRenderContext<TState, TArgs>
 function renderWithBorderSlot<T>(state: BorderState, slot: BorderSlot, render: () => T): T {
   const previousSlot = state.codePreviewBorderCurrentSlot;
   state.codePreviewBorderCurrentSlot = slot;
-  if (slot === "call") state.codePreviewBorderCallLeftLabel = undefined;
-  else state.codePreviewBorderResultLeftLabel = undefined;
+  if (slot === "call") state.codePreviewBorderCallExpandLabel = undefined;
+  else state.codePreviewBorderResultExpandLabel = undefined;
   try {
     return render();
   } finally {
@@ -328,8 +328,8 @@ function renderWithBorderSlot<T>(state: BorderState, slot: BorderSlot, render: (
   }
 }
 
-function getBorderLeftLabel(state: BorderState): string | undefined {
-  return state.codePreviewBorderResultLeftLabel ?? state.codePreviewBorderCallLeftLabel;
+function getBorderExpandLabel(state: BorderState): string | undefined {
+  return state.codePreviewBorderResultExpandLabel ?? state.codePreviewBorderCallExpandLabel;
 }
 
 type BorderColorKey = "borderMuted" | "warning" | "success" | "error";
@@ -378,7 +378,7 @@ const RESET_ANSI = "\x1b[0m";
 class BorderedToolCall implements Component {
   private callComponent: Component | undefined;
   private borderColorKey: BorderColorKey = "borderMuted";
-  private leftLabel: string | undefined;
+  private expandLabel: string | undefined;
   private timingLabel: string | undefined;
   private resultComponent: Component | undefined;
   private cachedWidth: number | undefined;
@@ -400,9 +400,9 @@ class BorderedToolCall implements Component {
     this.invalidateCache();
   }
 
-  setLeftLabel(label: string | undefined): void {
-    if (this.leftLabel === label) return;
-    this.leftLabel = label;
+  setExpandLabel(label: string | undefined): void {
+    if (this.expandLabel === label) return;
+    this.expandLabel = label;
     this.invalidateCache();
   }
 
@@ -450,21 +450,19 @@ class BorderedToolCall implements Component {
 
   private renderBottomBorder(width: number, border: (value: string) => string): string {
     const innerWidth = width - 2;
-    const leftLabel = this.leftLabel ? ` ${this.leftLabel} ` : "";
-    const rightLabel = this.timingLabel ? this.theme.fg("muted", ` ${this.timingLabel} `) : "";
-    const leftWidth = visibleWidth(leftLabel);
-    const rightWidth = visibleWidth(rightLabel);
+    const label = this.bottomRightLabel();
+    const labelWidth = visibleWidth(label);
+    if (labelWidth === 0) return border(`╰${"─".repeat(innerWidth)}╯`);
+    if (labelWidth > innerWidth) return border(`╰${"─".repeat(innerWidth)}╯`);
+    return `${border("╰")}${border("─".repeat(innerWidth - labelWidth))}${label}${border("╯")}`;
+  }
 
-    if (leftWidth === 0 && rightWidth === 0) return border(`╰${"─".repeat(innerWidth)}╯`);
-    if (leftWidth + rightWidth > innerWidth) {
-      if (leftWidth > 0 && leftWidth <= innerWidth)
-        return `${border("╰")}${leftLabel}${border("─".repeat(innerWidth - leftWidth))}${border("╯")}`;
-      if (rightWidth > 0 && rightWidth <= innerWidth)
-        return `${border("╰")}${border("─".repeat(innerWidth - rightWidth))}${rightLabel}${border("╯")}`;
-      return border(`╰${"─".repeat(innerWidth)}╯`);
-    }
-
-    return `${border("╰")}${leftLabel}${border("─".repeat(innerWidth - leftWidth - rightWidth))}${rightLabel}${border("╯")}`;
+  private bottomRightLabel(): string {
+    const labels = [
+      this.expandLabel,
+      this.timingLabel ? this.theme.fg("muted", this.timingLabel) : undefined,
+    ].filter((label): label is string => Boolean(label));
+    return labels.length ? ` ${labels.join(this.theme.fg("muted", " - "))} ` : "";
   }
 
   private renderBody(width: number): string[] {
@@ -488,8 +486,9 @@ export function hiddenPreviewExpandHintForShell(
   const borderState = state as BorderState;
   const slot = borderState.codePreviewBorderCurrentSlot;
   if (slot !== "call" && slot !== "result") return hiddenPreviewExpandHint(theme);
-  if (slot === "call") borderState.codePreviewBorderCallLeftLabel = hiddenPreviewExpandLabel(theme);
-  else borderState.codePreviewBorderResultLeftLabel = hiddenPreviewExpandLabel(theme);
+  if (slot === "call")
+    borderState.codePreviewBorderCallExpandLabel = hiddenPreviewExpandLabel(theme);
+  else borderState.codePreviewBorderResultExpandLabel = hiddenPreviewExpandLabel(theme);
   return "";
 }
 

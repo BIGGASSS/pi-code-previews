@@ -147,8 +147,8 @@ test("registered write renderer hides code previews until expanded", () => {
       ),
     );
     assert.match(collapsedCall, /write src\/a\.ts/);
-    assert.match(collapsedCall, /output hidden/);
     assert.match(collapsedCall, /expand/);
+    assert.doesNotMatch(collapsedCall, /output hidden/);
     assert.doesNotMatch(collapsedCall, /const after = 2/);
 
     const expandedCall = stripAnsi(
@@ -191,8 +191,8 @@ test("registered write renderer hides code previews until expanded", () => {
       ),
     );
     assert.match(collapsedResult, /✓ Write applied/);
-    assert.match(collapsedResult, /output hidden/);
     assert.match(collapsedResult, /expand/);
+    assert.doesNotMatch(collapsedResult, /output hidden/);
     assert.doesNotMatch(collapsedResult, /const after = 2/);
 
     const newFileCollapsedResult = stripAnsi(
