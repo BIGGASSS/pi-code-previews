@@ -39,6 +39,7 @@ const FLAT_SETTING_IDS = [
   "wordEmphasis",
   "tools",
   "toolCallBackground",
+  "toolCallTiming",
   "readContentPreview",
   "readCollapsedLines",
   "writeCollapsedLines",
@@ -62,6 +63,7 @@ const APPEARANCE_SETTING_IDS = [
   "shikiTheme",
   "syntaxHighlighting",
   "toolCallBackground",
+  "toolCallTiming",
   "readLineNumbers",
   "pathIcons",
 ] as const satisfies readonly SettingsUiItemId[];
@@ -116,12 +118,12 @@ export function createSettingsCategoryItems(
     {
       id: groupId("appearance"),
       label: "Appearance",
-      description: "Theme, syntax color, tool frames, line numbers, and path icons.",
+      description: "Theme, syntax color, tool frames, timing, line numbers, and path icons.",
       currentValue: summarizeAppearance(current),
       submenu: (_currentValue, done) =>
         new SettingsGroupSubmenu({
           title: "Appearance",
-          description: "Theme, syntax color, tool frames, line numbers, and path icons.",
+          description: "Theme, syntax color, tool frames, timing, line numbers, and path icons.",
           items: () => createSettingListItems(getCurrent(), APPEARANCE_SETTING_IDS),
           onChange: onSettingChange,
           done,
@@ -324,6 +326,15 @@ function createSettingItem(current: CodePreviewSettings, id: SettingsUiItemId): 
           "Choose Pi's default colored background, no frame, or a border-only frame. Changes take effect after /reload.",
         currentValue: formatSettingValue(current, id),
         values: ["on", "border", "off"],
+      };
+    case "toolCallTiming":
+      return {
+        id,
+        label: "Tool call timing",
+        description:
+          "Show each tool's elapsed duration in the result footer, or in the bottom-right border when border mode is enabled.",
+        currentValue: formatSettingValue(current, id),
+        values: ["on", "off"],
       };
     case "readContentPreview":
       return {
@@ -627,7 +638,7 @@ function groupId(name: string): string {
 }
 
 function summarizeAppearance(settings: CodePreviewSettings): string {
-  return `${settings.shikiTheme} · syntax ${onOff(settings.syntaxHighlighting)}`;
+  return `${settings.shikiTheme} · syntax ${onOff(settings.syntaxHighlighting)} · timing ${onOff(settings.toolCallTiming)}`;
 }
 
 function summarizeDiffPreviews(settings: CodePreviewSettings): string {

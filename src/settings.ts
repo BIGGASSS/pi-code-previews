@@ -18,6 +18,7 @@ export interface CodePreviewSettings {
   diffIntensity: DiffBackgroundIntensity;
   wordEmphasis: DiffWordEmphasis;
   toolCallBackground: ToolCallBackgroundMode;
+  toolCallTiming: boolean;
   readCollapsedLines: number;
   readContentPreview: boolean;
   writeCollapsedLines: number;
@@ -41,6 +42,7 @@ export const defaultCodePreviewSettings: CodePreviewSettings = {
   diffIntensity: envDiffIntensity("CODE_PREVIEW_DIFF_INTENSITY", "subtle"),
   wordEmphasis: envDiffWordEmphasis("CODE_PREVIEW_WORD_EMPHASIS", "all"),
   toolCallBackground: envToolCallBackgroundMode("CODE_PREVIEW_TOOL_CALL_BACKGROUND", "on"),
+  toolCallTiming: envBoolean("CODE_PREVIEW_TOOL_CALL_TIMING", true),
   readCollapsedLines: positiveEnvInteger("CODE_PREVIEW_READ_LINES", 10),
   readContentPreview: envBoolean("CODE_PREVIEW_READ_CONTENT", true),
   writeCollapsedLines: positiveEnvInteger("CODE_PREVIEW_WRITE_LINES", 10),
@@ -100,6 +102,7 @@ export function normalizeSettings(
   const diffIntensity = getObjectValue(data, "diffIntensity");
   const wordEmphasis = getObjectValue(data, "wordEmphasis");
   const toolCallBackground = getObjectValue(data, "toolCallBackground");
+  const toolCallTiming = getObjectValue(data, "toolCallTiming");
   const readContentPreview = getObjectValue(data, "readContentPreview");
   const grepResultPreview = getObjectValue(data, "grepResultPreview");
   const findResultPreview = getObjectValue(data, "findResultPreview");
@@ -120,6 +123,7 @@ export function normalizeSettings(
       toolCallBackground,
       fallback.toolCallBackground,
     ),
+    toolCallTiming: typeof toolCallTiming === "boolean" ? toolCallTiming : fallback.toolCallTiming,
     readCollapsedLines: coerceNumber(
       getObjectValue(data, "readCollapsedLines"),
       fallback.readCollapsedLines,
@@ -179,6 +183,9 @@ const SETTING_UPDATERS = {
   },
   toolCallBackground: (next, _current, value) => {
     if (isToolCallBackgroundMode(value)) next.toolCallBackground = value;
+  },
+  toolCallTiming: (next, _current, value) => {
+    next.toolCallTiming = value === "on";
   },
   readCollapsedLines: (next, current, value) => {
     next.readCollapsedLines = coerceStringNumber(value, current.readCollapsedLines);

@@ -42,6 +42,7 @@ export default async function codePreviews(pi: ExtensionAPI) {
         `Shiki theme: ${codePreviewSettings.shikiTheme}`,
         `Syntax highlighting: ${onOff(codePreviewSettings.syntaxHighlighting)}`,
         `Tool call background: ${codePreviewSettings.toolCallBackground}`,
+        `Tool call timing: ${onOff(codePreviewSettings.toolCallTiming)}`,
         `Read content preview: ${onOff(codePreviewSettings.readContentPreview)}`,
         `Grep result preview: ${onOff(codePreviewSettings.grepResultPreview)}`,
         `Find result preview: ${onOff(codePreviewSettings.findResultPreview)}`,

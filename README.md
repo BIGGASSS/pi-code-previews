@@ -25,6 +25,7 @@ pi install git:github.com/mattleong/pi-code-previews
 - Readable `grep` results grouped by file.
 - Compact `find` and `ls` path lists with optional icons.
 - Optional visual warnings for risky-looking shell commands and secret-looking output.
+- Tool call duration timing in result footers or border frames.
 - Configurable themes, line counts, icons, and highlighting behavior.
 
 ## Usage
@@ -77,6 +78,7 @@ CODE_PREVIEW_WRITE_LINES=20
 CODE_PREVIEW_EDIT_LINES=120 # or all
 CODE_PREVIEW_WORD_EMPHASIS=all # all, smart, or off
 CODE_PREVIEW_TOOL_CALL_BACKGROUND=border # on, off, border, true/false, yes/no, or 1/0
+CODE_PREVIEW_TOOL_CALL_TIMING=true # true/false, on/off, yes/no, or 1/0
 CODE_PREVIEW_GREP_LINES=40
 CODE_PREVIEW_GREP_RESULTS=false # true/false, on/off, yes/no, or 1/0
 CODE_PREVIEW_FIND_RESULTS=false # true/false, on/off, yes/no, or 1/0
@@ -92,6 +94,8 @@ When result previews are disabled, collapsed successful output is hidden while t
 
 `CODE_PREVIEW_TOOL_CALL_BACKGROUND=off` removes Pi's default colored tool box background for code-preview-owned tools. `CODE_PREVIEW_TOOL_CALL_BACKGROUND=border` replaces the background with a border-only frame. This setting changes the tool render shell, so it takes effect after `/reload`.
 
+`CODE_PREVIEW_TOOL_CALL_TIMING=false` hides tool durations. When enabled, durations appear in the result footer unless `toolCallBackground` is `border`; in border mode they appear in the bottom-right border corner.
+
 ## Project settings
 
 You can also set defaults in `.pi/settings.json`:
@@ -102,6 +106,7 @@ You can also set defaults in `.pi/settings.json`:
     "shikiTheme": "dark-plus",
     "wordEmphasis": "all",
     "toolCallBackground": "border",
+    "toolCallTiming": true,
     "readContentPreview": false,
     "grepResultPreview": false,
     "findResultPreview": false,
