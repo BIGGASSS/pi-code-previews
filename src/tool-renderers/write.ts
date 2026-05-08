@@ -9,6 +9,7 @@ import {
   renderPlainDiff,
   summarizeDiff,
 } from "../diff.ts";
+import { describeDiffShape, diffSummarySeparator } from "../diff-summary.ts";
 import { countLabel, formatBytes, metadata, previewFooter, showingFooter } from "../format.ts";
 import { resolvePreviewLanguage } from "../language.ts";
 import { renderDisplayPath } from "../paths.ts";
@@ -148,7 +149,7 @@ function renderWriteDiffPreview(
     expanded || codePreviewSettings.editCollapsedLines === "all"
       ? summary.totalLines
       : codePreviewSettings.editCollapsedLines;
-  const header = `${theme.fg("success", "✓ Write applied")} ${theme.fg("muted", describeEditShape(summary))}${editSummarySeparator(theme)}${theme.fg("success", `+${summary.additions}`)} ${theme.fg("error", `-${summary.removals}`)}\n`;
+  const header = `${theme.fg("success", "✓ Write applied")} ${theme.fg("muted", describeDiffShape(summary))}${diffSummarySeparator(theme)}${theme.fg("success", `+${summary.additions}`)} ${theme.fg("error", `-${summary.removals}`)}\n`;
   const skipSyntaxHighlight = shouldSkipHighlight(diff);
   const decorate = (body: string) => {
     let text = header + body;
@@ -164,16 +165,4 @@ function renderWriteDiffPreview(
         decorate,
         invalidate,
       });
-}
-
-function editSummarySeparator(theme: Theme): string {
-  return theme.fg("muted", " · ");
-}
-
-function describeEditShape(summary: ReturnType<typeof summarizeDiff>): string {
-  const parts: string[] = [];
-  if (summary.replacements > 0) parts.push(countLabel(summary.replacements, "replacement"));
-  if (summary.insertions > 0) parts.push(countLabel(summary.insertions, "insertion"));
-  if (summary.deletions > 0) parts.push(countLabel(summary.deletions, "deletion"));
-  return parts.length ? parts.join(", ") : "changes";
 }

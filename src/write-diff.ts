@@ -2,6 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import { isAbsolute, resolve } from "node:path";
 import { diffLines } from "diff";
+import { positiveEnvInteger } from "./env.ts";
 import { formatBytes } from "./format.ts";
 
 export type StructuredDiffLine = {
@@ -19,7 +20,7 @@ export type ExistingFilePreview =
   | { kind: "content"; content: string }
   | { kind: "skipped"; reason: string; byteLength?: number; maxBytes: number };
 
-const MAX_WRITE_DIFF_BYTES = envPositiveInteger("CODE_PREVIEW_MAX_WRITE_DIFF_BYTES", 200000);
+const MAX_WRITE_DIFF_BYTES = positiveEnvInteger("CODE_PREVIEW_MAX_WRITE_DIFF_BYTES", 200000);
 
 export async function readExistingFileForPreview(
   path: string,
@@ -86,7 +87,8 @@ export function getMaxWriteDiffBytes(): number {
 }
 
 export function resolvePreviewPath(path: string, cwd: string): string {
-  let expanded = path.replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g, " ");
+  let expanded = path.startsWith("@") ? path.slice(1) : path;
+  expanded = expanded.replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g, " ");
   if (expanded === "~") expanded = homedir();
   else if (expanded.startsWith("~/")) expanded = `${homedir()}${expanded.slice(1)}`;
   return isAbsolute(expanded) ? expanded : resolve(cwd, expanded);
@@ -214,11 +216,6 @@ function compactContextLines(
       content: line,
     })),
   ];
-}
-
-function envPositiveInteger(name: string, fallback: number): number {
-  const value = Number.parseInt(process.env[name] ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
 function isFileNotFound(error: unknown): boolean {

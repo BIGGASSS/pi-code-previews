@@ -10,6 +10,7 @@ import {
   renderSyntaxHighlightedDiff,
   summarizeDiff,
 } from "../diff.ts";
+import { describeDiffShape, diffSummarySeparator, type DiffSummary } from "../diff-summary.ts";
 import { countLabel, previewFooter, showingFooter, themedKeyHint } from "../format.ts";
 import { resolvePreviewLanguage } from "../language.ts";
 import { renderDisplayPath } from "../paths.ts";
@@ -248,7 +249,7 @@ class HeaderAndBody implements Component {
 function formatEditHeader(path: string, cwd: string, theme: Theme, summaryText: unknown): string {
   const base = `${theme.fg("toolTitle", theme.bold("edit"))} ${renderDisplayPath(path, cwd, theme)}`;
   return typeof summaryText === "string" && summaryText
-    ? `${base}${editSummarySeparator(theme)}${summaryText}`
+    ? `${base}${diffSummarySeparator(theme)}${summaryText}`
     : base;
 }
 
@@ -264,31 +265,15 @@ function updateEditHeader(
     );
 }
 
-function formatEditSummary(
-  summary: ReturnType<typeof summarizeDiff>,
-  limit: number,
-  theme: Theme,
-): string {
-  let text = theme.fg("muted", describeEditShape(summary));
-  text += editSummarySeparator(theme) + theme.fg("muted", countLabel(summary.hunks, "hunk"));
+function formatEditSummary(summary: DiffSummary, limit: number, theme: Theme): string {
+  let text = theme.fg("muted", describeDiffShape(summary));
+  text += diffSummarySeparator(theme) + theme.fg("muted", countLabel(summary.hunks, "hunk"));
   text +=
-    editSummarySeparator(theme) +
+    diffSummarySeparator(theme) +
     `${theme.fg("success", `+${summary.additions}`)} ${theme.fg("error", `-${summary.removals}`)}`;
   if (summary.totalLines > limit)
     text +=
-      editSummarySeparator(theme) +
+      diffSummarySeparator(theme) +
       theme.fg("muted", `showing ${limit}/${summary.totalLines} diff lines`);
   return text;
-}
-
-function editSummarySeparator(theme: Theme): string {
-  return theme.fg("muted", " · ");
-}
-
-function describeEditShape(summary: ReturnType<typeof summarizeDiff>): string {
-  const parts: string[] = [];
-  if (summary.replacements > 0) parts.push(countLabel(summary.replacements, "replacement"));
-  if (summary.insertions > 0) parts.push(countLabel(summary.insertions, "insertion"));
-  if (summary.deletions > 0) parts.push(countLabel(summary.deletions, "deletion"));
-  return parts.length ? parts.join(", ") : "changes";
 }

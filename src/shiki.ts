@@ -1,5 +1,6 @@
 import type { Theme } from "@mariozechner/pi-coding-agent";
 import { bundledThemesInfo, createHighlighter } from "shiki";
+import { positiveEnvInteger } from "./env.ts";
 import { hashString } from "./hash.ts";
 import { setCodePreviewSettings, codePreviewSettings } from "./settings.ts";
 import { escapeControlChars } from "./terminal-text.ts";
@@ -19,9 +20,9 @@ const languageLoadCallbacks = new Map<string, Set<() => void>>();
 const highlighterReadyCallbacks = new Set<() => void>();
 const shikiThemeTypes = new Map(bundledThemesInfo.map((theme) => [theme.id, theme.type]));
 
-const MAX_HIGHLIGHT_CHARS = envPositiveInteger("CODE_PREVIEW_MAX_HIGHLIGHT_CHARS", 80000);
-const CACHE_LIMIT = envPositiveInteger("CODE_PREVIEW_CACHE_LIMIT", 192);
-const CACHE_CHAR_LIMIT = envPositiveInteger("CODE_PREVIEW_CACHE_CHAR_LIMIT", 4_000_000);
+const MAX_HIGHLIGHT_CHARS = positiveEnvInteger("CODE_PREVIEW_MAX_HIGHLIGHT_CHARS", 80000);
+const CACHE_LIMIT = positiveEnvInteger("CODE_PREVIEW_CACHE_LIMIT", 192);
+const CACHE_CHAR_LIMIT = positiveEnvInteger("CODE_PREVIEW_CACHE_CHAR_LIMIT", 4_000_000);
 
 const PRELOADED_SHIKI_LANGUAGES = [
   "bash",
@@ -130,11 +131,7 @@ export function renderWithShiki(
 }
 
 export function shouldSkipHighlight(text: string): boolean {
-  return (
-    Number.isFinite(MAX_HIGHLIGHT_CHARS) &&
-    MAX_HIGHLIGHT_CHARS > 0 &&
-    text.length > MAX_HIGHLIGHT_CHARS
-  );
+  return text.length > MAX_HIGHLIGHT_CHARS;
 }
 
 export function getShikiStatus(): {
@@ -225,11 +222,6 @@ function requestLanguageLoad(shikiLang: string, invalidate: (() => void) | undef
     .finally(() => {
       if (generation === shikiHighlighterGeneration) pendingShikiLanguages.delete(shikiLang);
     });
-}
-
-function envPositiveInteger(name: string, fallback: number): number {
-  const value = Number.parseInt(process.env[name] ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
 export function normalizeShikiLanguage(lang: string): string {

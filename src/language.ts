@@ -1,5 +1,6 @@
 import { basename, extname } from "node:path";
 import { bundledLanguages } from "shiki";
+import { positiveEnvInteger } from "./env.ts";
 
 const EXACT_BASENAMES = new Map<string, string>([
   ["dockerfile", "dockerfile"],
@@ -119,9 +120,4 @@ function isJson(text: string): boolean {
   } catch {
     return false;
   }
-}
-
-function positiveEnvInteger(name: string, fallback: number): number {
-  const value = Number.parseInt(process.env[name] ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : fallback;
 }

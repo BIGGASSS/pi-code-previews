@@ -1,5 +1,6 @@
 import { bundledThemes } from "shiki";
 import { getObjectValue } from "./data.ts";
+import { parsePositiveInteger, positiveEnvInteger } from "./env.ts";
 import {
   ALL_CODE_PREVIEW_TOOLS,
   isCodePreviewToolName,
@@ -33,28 +34,6 @@ export interface CodePreviewSettings {
   tools: CodePreviewToolName[];
 }
 
-export const CODE_PREVIEW_SETTING_KEYS = [
-  "shikiTheme",
-  "diffIntensity",
-  "wordEmphasis",
-  "readCollapsedLines",
-  "readContentPreview",
-  "writeCollapsedLines",
-  "editCollapsedLines",
-  "grepCollapsedLines",
-  "grepResultPreview",
-  "findResultPreview",
-  "lsResultPreview",
-  "pathListCollapsedLines",
-  "readLineNumbers",
-  "bashResultPreview",
-  "bashWarnings",
-  "syntaxHighlighting",
-  "secretWarnings",
-  "pathIcons",
-  "tools",
-] as const satisfies readonly (keyof CodePreviewSettings)[];
-
 export const defaultCodePreviewSettings: CodePreviewSettings = {
   shikiTheme: envTheme("CODE_PREVIEW_THEME", "dark-plus"),
   diffIntensity: envDiffIntensity("CODE_PREVIEW_DIFF_INTENSITY", "subtle"),
@@ -77,6 +56,12 @@ export const defaultCodePreviewSettings: CodePreviewSettings = {
   tools: [...ALL_CODE_PREVIEW_TOOLS],
 };
 
+export const CODE_PREVIEW_SETTING_KEYS = Object.keys(
+  defaultCodePreviewSettings,
+) as readonly (keyof CodePreviewSettings)[];
+
+export type CodePreviewEditableSettingId = keyof CodePreviewSettings | "resetToDefaults";
+
 export const codePreviewSettings: CodePreviewSettings = cloneCodePreviewSettings(
   defaultCodePreviewSettings,
 );
@@ -87,6 +72,21 @@ export function setCodePreviewSettings(next: CodePreviewSettings) {
 
 function cloneCodePreviewSettings(settings: CodePreviewSettings): CodePreviewSettings {
   return { ...settings, tools: [...settings.tools] };
+}
+
+export function formatToolsSettingValue(tools: readonly CodePreviewToolName[]): string {
+  return tools.length ? tools.join(", ") : "none";
+}
+
+export function formatSettingValue(
+  settings: CodePreviewSettings,
+  id: CodePreviewEditableSettingId,
+): string {
+  if (id === "resetToDefaults") return "keep current";
+  if (id === "tools") return formatToolsSettingValue(settings.tools);
+  const value = settings[id];
+  if (typeof value === "boolean") return value ? "on" : "off";
+  return String(value);
 }
 
 export function normalizeSettings(
@@ -153,21 +153,32 @@ export function normalizeSettings(
   });
 }
 
-export function updateSetting(
+type SettingUpdater = (
+  next: CodePreviewSettings,
   current: CodePreviewSettings,
-  id: string,
   value: string,
-): CodePreviewSettings {
-  const next = { ...current };
-  if (id === "shikiTheme" && isBundledThemeName(value)) next.shikiTheme = value;
-  else if (id === "diffIntensity" && isDiffBackgroundIntensity(value)) next.diffIntensity = value;
-  else if (id === "wordEmphasis" && isDiffWordEmphasis(value)) next.wordEmphasis = value;
-  else if (id === "readCollapsedLines")
+) => void;
+
+const SETTING_UPDATERS = {
+  shikiTheme: (next, _current, value) => {
+    if (isBundledThemeName(value)) next.shikiTheme = value;
+  },
+  diffIntensity: (next, _current, value) => {
+    if (isDiffBackgroundIntensity(value)) next.diffIntensity = value;
+  },
+  wordEmphasis: (next, _current, value) => {
+    if (isDiffWordEmphasis(value)) next.wordEmphasis = value;
+  },
+  readCollapsedLines: (next, current, value) => {
     next.readCollapsedLines = coerceStringNumber(value, current.readCollapsedLines);
-  else if (id === "readContentPreview") next.readContentPreview = value === "on";
-  else if (id === "writeCollapsedLines")
+  },
+  readContentPreview: (next, _current, value) => {
+    next.readContentPreview = value === "on";
+  },
+  writeCollapsedLines: (next, current, value) => {
     next.writeCollapsedLines = coerceStringNumber(value, current.writeCollapsedLines);
-  else if (id === "editCollapsedLines")
+  },
+  editCollapsedLines: (next, current, value) => {
     next.editCollapsedLines =
       value === "all"
         ? "all"
@@ -175,24 +186,64 @@ export function updateSetting(
             value,
             typeof current.editCollapsedLines === "number" ? current.editCollapsedLines : 100,
           );
-  else if (id === "grepCollapsedLines")
+  },
+  grepCollapsedLines: (next, current, value) => {
     next.grepCollapsedLines = coerceStringNumber(value, current.grepCollapsedLines);
-  else if (id === "grepResultPreview") next.grepResultPreview = value === "on";
-  else if (id === "findResultPreview") next.findResultPreview = value === "on";
-  else if (id === "lsResultPreview") next.lsResultPreview = value === "on";
-  else if (id === "pathListCollapsedLines")
+  },
+  grepResultPreview: (next, _current, value) => {
+    next.grepResultPreview = value === "on";
+  },
+  findResultPreview: (next, _current, value) => {
+    next.findResultPreview = value === "on";
+  },
+  lsResultPreview: (next, _current, value) => {
+    next.lsResultPreview = value === "on";
+  },
+  pathListCollapsedLines: (next, current, value) => {
     next.pathListCollapsedLines = coerceStringNumber(value, current.pathListCollapsedLines);
-  else if (id === "readLineNumbers") next.readLineNumbers = value === "on";
-  else if (id === "bashResultPreview") next.bashResultPreview = value === "on";
-  else if (id === "bashWarnings") next.bashWarnings = value === "on";
-  else if (id === "syntaxHighlighting") next.syntaxHighlighting = value === "on";
-  else if (id === "secretWarnings") next.secretWarnings = value === "on";
-  else if (id === "pathIcons" && isPathIconMode(value)) next.pathIcons = value;
-  else if (id === "tools") next.tools = coerceTools(value, current.tools);
+  },
+  readLineNumbers: (next, _current, value) => {
+    next.readLineNumbers = value === "on";
+  },
+  bashResultPreview: (next, _current, value) => {
+    next.bashResultPreview = value === "on";
+  },
+  bashWarnings: (next, _current, value) => {
+    next.bashWarnings = value === "on";
+  },
+  syntaxHighlighting: (next, _current, value) => {
+    next.syntaxHighlighting = value === "on";
+  },
+  secretWarnings: (next, _current, value) => {
+    next.secretWarnings = value === "on";
+  },
+  pathIcons: (next, _current, value) => {
+    if (isPathIconMode(value)) next.pathIcons = value;
+  },
+  tools: (next, current, value) => {
+    next.tools = coerceTools(value, current.tools);
+  },
+} satisfies Record<keyof CodePreviewSettings, SettingUpdater>;
+
+export function updateSetting(
+  current: CodePreviewSettings,
+  id: string,
+  value: string,
+): CodePreviewSettings {
+  if (id === "resetToDefaults" && value === "reset now")
+    return cloneCodePreviewSettings(defaultCodePreviewSettings);
+
+  const next = cloneCodePreviewSettings(current);
+  const updater = getSettingUpdater(id);
+  if (updater) updater(next, current, value);
   else if (id.startsWith("tool:")) next.tools = updateToolToggle(current.tools, id, value);
-  else if (id === "resetToDefaults" && value === "reset now")
-    return { ...defaultCodePreviewSettings };
   return withRequiredToolRenderers(next);
+}
+
+function getSettingUpdater(id: string): SettingUpdater | undefined {
+  return Object.hasOwn(SETTING_UPDATERS, id)
+    ? SETTING_UPDATERS[id as keyof CodePreviewSettings]
+    : undefined;
 }
 
 function envTheme(name: string, fallback: string): string {
@@ -201,8 +252,7 @@ function envTheme(name: string, fallback: string): string {
 }
 
 function envNumber(name: string, fallback: number): number {
-  const value = Number(process.env[name]);
-  return Number.isFinite(value) && value > 0 ? Math.floor(value) : fallback;
+  return positiveEnvInteger(name, fallback);
 }
 
 function envBoolean(name: string, fallback: boolean): boolean {
@@ -214,8 +264,7 @@ function envBoolean(name: string, fallback: boolean): boolean {
 function envEditLines(name: string, fallback: number | "all"): number | "all" {
   const value = process.env[name];
   if (value === "all") return "all";
-  const numeric = Number(value);
-  return Number.isFinite(numeric) && numeric > 0 ? Math.floor(numeric) : fallback;
+  return parsePositiveInteger(value) ?? fallback;
 }
 
 function envDiffIntensity(

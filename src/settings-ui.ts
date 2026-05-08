@@ -10,7 +10,11 @@ import {
 } from "@mariozechner/pi-tui";
 import { bundledThemes } from "shiki";
 import { getSettingsPath } from "./settings-store.ts";
-import type { CodePreviewSettings } from "./settings.ts";
+import {
+  formatSettingValue,
+  formatToolsSettingValue,
+  type CodePreviewSettings,
+} from "./settings.ts";
 import {
   ALL_CODE_PREVIEW_TOOLS,
   parseCodePreviewTools,
@@ -28,14 +32,14 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       id: "shikiTheme",
       label: "Syntax theme",
       description: "Theme used for Shiki syntax highlighting in code previews.",
-      currentValue: current.shikiTheme,
+      currentValue: formatSettingValue(current, "shikiTheme"),
       submenu: (currentValue, done) => new ThemeSelectSubmenu(currentValue, done),
     },
     {
       id: "diffIntensity",
       label: "Diff background",
       description: "Background intensity for added and removed edit diff lines.",
-      currentValue: current.diffIntensity,
+      currentValue: formatSettingValue(current, "diffIntensity"),
       values: ["off", "subtle", "medium"],
     },
     {
@@ -43,7 +47,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Word-level diff emphasis",
       description:
         "Highlight changed words inside edit diffs. All mode is the default; smart suppresses low-signal punctuation and wrapper syntax.",
-      currentValue: current.wordEmphasis,
+      currentValue: formatSettingValue(current, "wordEmphasis"),
       values: ["all", "smart", "off"],
     },
     {
@@ -51,7 +55,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Preview tools",
       description:
         "Open granular tool preview toggles. Changes take effect after /reload. Tools already owned by another extension are skipped automatically.",
-      currentValue: formatToolsSettingValue(current.tools),
+      currentValue: formatSettingValue(current, "tools"),
       submenu: (currentValue, done) => new ToolPreviewSettingsSubmenu(currentValue, done),
     },
     {
@@ -59,21 +63,21 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Read content preview",
       description:
         "Show file contents in read results. Turn off to hide collapsed output while still allowing expanded output.",
-      currentValue: current.readContentPreview ? "on" : "off",
+      currentValue: formatSettingValue(current, "readContentPreview"),
       values: ["on", "off"],
     },
     {
       id: "readCollapsedLines",
       label: "Read preview lines",
       description: "Maximum read result lines shown before collapsing.",
-      currentValue: String(current.readCollapsedLines),
+      currentValue: formatSettingValue(current, "readCollapsedLines"),
       values: ["10", "20", "40", "80"],
     },
     {
       id: "writeCollapsedLines",
       label: "Write preview lines",
       description: "Maximum write content lines shown before collapsing.",
-      currentValue: String(current.writeCollapsedLines),
+      currentValue: formatSettingValue(current, "writeCollapsedLines"),
       values: ["10", "20", "40", "80"],
     },
     {
@@ -81,7 +85,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Edit diff preview lines",
       description:
         "Maximum edit diff lines shown before collapsing. `all` matches pi's built-in edit diff behavior.",
-      currentValue: String(current.editCollapsedLines),
+      currentValue: formatSettingValue(current, "editCollapsedLines"),
       values: ["all", "60", "100", "160", "240"],
     },
     {
@@ -89,14 +93,14 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Grep result preview",
       description:
         "Show grep matches in tool results. Turn off to hide collapsed output while still allowing expanded output.",
-      currentValue: current.grepResultPreview ? "on" : "off",
+      currentValue: formatSettingValue(current, "grepResultPreview"),
       values: ["on", "off"],
     },
     {
       id: "grepCollapsedLines",
       label: "Grep preview lines",
       description: "Maximum grep result lines shown before collapsing.",
-      currentValue: String(current.grepCollapsedLines),
+      currentValue: formatSettingValue(current, "grepCollapsedLines"),
       values: ["10", "15", "25", "40", "80"],
     },
     {
@@ -104,7 +108,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Find result preview",
       description:
         "Show find paths in tool results. Turn off to hide collapsed output while still allowing expanded output.",
-      currentValue: current.findResultPreview ? "on" : "off",
+      currentValue: formatSettingValue(current, "findResultPreview"),
       values: ["on", "off"],
     },
     {
@@ -112,21 +116,21 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Ls result preview",
       description:
         "Show ls entries in tool results. Turn off to hide collapsed output while still allowing expanded output.",
-      currentValue: current.lsResultPreview ? "on" : "off",
+      currentValue: formatSettingValue(current, "lsResultPreview"),
       values: ["on", "off"],
     },
     {
       id: "pathListCollapsedLines",
       label: "Find/ls preview lines",
       description: "Maximum find and ls result lines shown before collapsing.",
-      currentValue: String(current.pathListCollapsedLines),
+      currentValue: formatSettingValue(current, "pathListCollapsedLines"),
       values: ["10", "20", "40", "80", "120"],
     },
     {
       id: "readLineNumbers",
       label: "Read line numbers",
       description: "Show line numbers in read previews.",
-      currentValue: current.readLineNumbers ? "on" : "off",
+      currentValue: formatSettingValue(current, "readLineNumbers"),
       values: ["on", "off"],
     },
     {
@@ -134,7 +138,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Find/ls path icons",
       description:
         "Choose icons for find and ls path-list previews. Nerd mode requires a Nerd Font.",
-      currentValue: current.pathIcons,
+      currentValue: formatSettingValue(current, "pathIcons"),
       values: ["unicode", "nerd", "off"],
     },
     {
@@ -142,14 +146,14 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Bash result preview",
       description:
         "Show successful bash output. Turn off to hide collapsed output while still allowing expanded output, running state, and errors.",
-      currentValue: current.bashResultPreview ? "on" : "off",
+      currentValue: formatSettingValue(current, "bashResultPreview"),
       values: ["on", "off"],
     },
     {
       id: "bashWarnings",
       label: "Bash visual warnings",
       description: "Show preview-only warnings for potentially destructive shell commands.",
-      currentValue: current.bashWarnings ? "on" : "off",
+      currentValue: formatSettingValue(current, "bashWarnings"),
       values: ["on", "off"],
     },
     {
@@ -157,7 +161,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Syntax highlighting",
       description:
         "Use Shiki token colors in code previews. Turn off for plainer, lower-noise previews.",
-      currentValue: current.syntaxHighlighting ? "on" : "off",
+      currentValue: formatSettingValue(current, "syntaxHighlighting"),
       values: ["on", "off"],
     },
     {
@@ -165,7 +169,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Secret value warnings",
       description:
         "Show preview-only warnings when read, write, or bash output looks like it may contain secrets.",
-      currentValue: current.secretWarnings ? "on" : "off",
+      currentValue: formatSettingValue(current, "secretWarnings"),
       values: ["on", "off"],
     },
     {
@@ -178,7 +182,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       id: "resetToDefaults",
       label: "Restore defaults",
       description: "Restore the default code preview settings.",
-      currentValue: "keep current",
+      currentValue: formatSettingValue(current, "resetToDefaults"),
       values: ["keep current", "reset now"],
     },
   ];
@@ -221,10 +225,6 @@ class ToolPreviewSettingsSubmenu extends Container {
       ALL_CODE_PREVIEW_TOOLS.filter((tool) => this.selectedTools.has(tool)),
     );
   }
-}
-
-export function formatToolsSettingValue(tools: readonly CodePreviewToolName[]): string {
-  return tools.length ? tools.join(", ") : "none";
 }
 
 function createToolToggleItems(

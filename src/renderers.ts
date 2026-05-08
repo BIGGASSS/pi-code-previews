@@ -7,9 +7,9 @@ import { registerGrep } from "./tool-renderers/grep.ts";
 import { registerLs } from "./tool-renderers/ls.ts";
 import { registerRead } from "./tool-renderers/read.ts";
 import { registerWrite } from "./tool-renderers/write.ts";
-import { resetCodePreviewToolStatuses, setCodePreviewToolStatus } from "./tool-status.ts";
-import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-selection.ts";
+import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-names.ts";
 import { getEnabledCodePreviewTools } from "./tool-selection.ts";
+import { resetCodePreviewToolStatuses, setCodePreviewToolStatus } from "./tool-status.ts";
 
 export interface RegisterToolRenderersOptions {
   registeredTools?: Set<CodePreviewToolName>;

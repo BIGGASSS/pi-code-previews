@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createSettingsItems } from "../src/settings-ui.ts";
 import {
+  CODE_PREVIEW_SETTING_KEYS,
   codePreviewSettings,
   defaultCodePreviewSettings,
   normalizeSettings,
@@ -119,29 +120,10 @@ test("individual tool toggles update configured previews", () => {
 
 test("settings UI item values are handled by updateSetting", () => {
   const uiIds = new Set(createSettingsItems(defaultCodePreviewSettings).map((item) => item.id));
-  const handledIds = new Set([
-    "shikiTheme",
-    "diffIntensity",
-    "wordEmphasis",
-    "tools",
-    "readContentPreview",
-    "readCollapsedLines",
-    "writeCollapsedLines",
-    "editCollapsedLines",
-    "grepResultPreview",
-    "grepCollapsedLines",
-    "findResultPreview",
-    "lsResultPreview",
-    "pathListCollapsedLines",
-    "readLineNumbers",
-    "pathIcons",
-    "bashResultPreview",
-    "bashWarnings",
-    "syntaxHighlighting",
-    "secretWarnings",
-    "resetToDefaults",
-  ]);
-  assert.deepEqual([...uiIds].filter((id) => id !== "settingsFile").sort(), [...handledIds].sort());
+  assert.deepEqual(
+    [...uiIds].filter((id) => id !== "settingsFile").sort(),
+    [...CODE_PREVIEW_SETTING_KEYS, "resetToDefaults"].sort(),
+  );
 
   assert.equal(
     updateSetting(defaultCodePreviewSettings, "shikiTheme", "github-dark").shikiTheme,

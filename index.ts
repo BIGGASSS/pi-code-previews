@@ -3,7 +3,7 @@ import { getSettingsListTheme } from "@mariozechner/pi-coding-agent";
 import { SettingsList, truncateToWidth, visibleWidth, type Component } from "@mariozechner/pi-tui";
 import { registerToolRenderers } from "./src/renderers.ts";
 import { getSettingsPath, loadSettingsFromDisk, saveSettingsToDisk } from "./src/settings-store.ts";
-import { createSettingsItems, formatToolsSettingValue } from "./src/settings-ui.ts";
+import { createSettingsItems } from "./src/settings-ui.ts";
 import {
   setCodePreviewSettings,
   codePreviewSettings,
@@ -17,7 +17,8 @@ import {
   formatPendingCodePreviewTools,
   formatSkippedCodePreviewToolLines,
 } from "./src/tool-status.ts";
-import { type CodePreviewToolName, formatEnabledCodePreviewTools } from "./src/tool-selection.ts";
+import { type CodePreviewToolName } from "./src/tool-names.ts";
+import { formatEnabledCodePreviewTools } from "./src/tool-selection.ts";
 
 /**
  * Syntax-highlighted code previews for pi.
@@ -176,24 +177,6 @@ function formatSettingsSaveError(error: unknown): string {
 }
 
 function syncSettingsListValues(list: SettingsList): void {
-  list.updateValue("shikiTheme", codePreviewSettings.shikiTheme);
-  list.updateValue("diffIntensity", codePreviewSettings.diffIntensity);
-  list.updateValue("wordEmphasis", codePreviewSettings.wordEmphasis);
-  list.updateValue("tools", formatToolsSettingValue(codePreviewSettings.tools));
-  list.updateValue("readContentPreview", codePreviewSettings.readContentPreview ? "on" : "off");
-  list.updateValue("readCollapsedLines", String(codePreviewSettings.readCollapsedLines));
-  list.updateValue("writeCollapsedLines", String(codePreviewSettings.writeCollapsedLines));
-  list.updateValue("editCollapsedLines", String(codePreviewSettings.editCollapsedLines));
-  list.updateValue("grepResultPreview", codePreviewSettings.grepResultPreview ? "on" : "off");
-  list.updateValue("grepCollapsedLines", String(codePreviewSettings.grepCollapsedLines));
-  list.updateValue("findResultPreview", codePreviewSettings.findResultPreview ? "on" : "off");
-  list.updateValue("lsResultPreview", codePreviewSettings.lsResultPreview ? "on" : "off");
-  list.updateValue("pathListCollapsedLines", String(codePreviewSettings.pathListCollapsedLines));
-  list.updateValue("readLineNumbers", codePreviewSettings.readLineNumbers ? "on" : "off");
-  list.updateValue("pathIcons", codePreviewSettings.pathIcons);
-  list.updateValue("bashResultPreview", codePreviewSettings.bashResultPreview ? "on" : "off");
-  list.updateValue("bashWarnings", codePreviewSettings.bashWarnings ? "on" : "off");
-  list.updateValue("syntaxHighlighting", codePreviewSettings.syntaxHighlighting ? "on" : "off");
-  list.updateValue("secretWarnings", codePreviewSettings.secretWarnings ? "on" : "off");
-  list.updateValue("resetToDefaults", "keep current");
+  for (const item of createSettingsItems(codePreviewSettings))
+    list.updateValue(item.id, item.currentValue);
 }

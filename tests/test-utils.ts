@@ -1,5 +1,6 @@
 import type { Theme } from "@mariozechner/pi-coding-agent";
 import type { Component } from "@mariozechner/pi-tui";
+import { codePreviewSettings, type CodePreviewSettings } from "../src/settings.ts";
 
 export function renderComponent(component: Component, width = 100): string {
   return component.render(width).join("\n");
@@ -11,6 +12,10 @@ export function stripAnsi(text: string): string {
 
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function cloneCodePreviewSettingsForTest(): CodePreviewSettings {
+  return { ...codePreviewSettings, tools: [...codePreviewSettings.tools] };
 }
 
 export function testTheme(): Theme {

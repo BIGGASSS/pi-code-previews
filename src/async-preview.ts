@@ -1,18 +1,12 @@
-import { Text, type Component } from "@mariozechner/pi-tui";
 import type { Theme } from "@mariozechner/pi-coding-agent";
+import { Text, type Component } from "@mariozechner/pi-tui";
+import { positiveEnvInteger } from "./env.ts";
 import { escapeControlChars } from "./terminal-text.ts";
 
-const ASYNC_RENDER_CHAR_THRESHOLD = Number.parseInt(
-  process.env.CODE_PREVIEW_ASYNC_RENDER_CHARS ?? "20000",
-  10,
-);
+const ASYNC_RENDER_CHAR_THRESHOLD = positiveEnvInteger("CODE_PREVIEW_ASYNC_RENDER_CHARS", 20000);
 
 export function shouldRenderAsync(text: string): boolean {
-  return (
-    Number.isFinite(ASYNC_RENDER_CHAR_THRESHOLD) &&
-    ASYNC_RENDER_CHAR_THRESHOLD > 0 &&
-    text.length > ASYNC_RENDER_CHAR_THRESHOLD
-  );
+  return text.length > ASYNC_RENDER_CHAR_THRESHOLD;
 }
 
 export class AsyncPreview implements Component {

@@ -5,6 +5,7 @@ import {
   wordEmphasisTokenValues,
   type WordChangeRanges,
 } from "./diff-word-emphasis.ts";
+import { positiveEnvInteger } from "./env.ts";
 import { codePreviewSettings } from "./settings.ts";
 import { renderWithShiki } from "./shiki.ts";
 import { escapeControlChars, visibleLength, wrapAnsiToWidth } from "./terminal-text.ts";
@@ -62,12 +63,7 @@ export class FullWidthDiffText implements Component {
   }
 }
 
-const DIFF_WRAP_ROWS = envPositiveInteger("CODE_PREVIEW_DIFF_WRAP_ROWS", 3);
-
-function envPositiveInteger(name: string, fallback: number): number {
-  const value = Number.parseInt(process.env[name] ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : fallback;
-}
+const DIFF_WRAP_ROWS = positiveEnvInteger("CODE_PREVIEW_DIFF_WRAP_ROWS", 3);
 
 function continuationPrefix(line: string): string {
   const pipe = line.indexOf("│ ");

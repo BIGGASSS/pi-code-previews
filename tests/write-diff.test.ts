@@ -22,9 +22,10 @@ test("createSimpleDiff keeps separated changes distinct", () => {
   assert.doesNotMatch(diff, /\+3 keep/);
 });
 
-test("resolvePreviewPath preserves @ paths and handles ~ and relative paths", () => {
-  assert.equal(resolvePreviewPath("@src/file.ts", "/tmp/project"), "/tmp/project/@src/file.ts");
+test("resolvePreviewPath mirrors pi path expansion", () => {
+  assert.equal(resolvePreviewPath("@src/file.ts", "/tmp/project"), "/tmp/project/src/file.ts");
   assert.equal(resolvePreviewPath("src/file.ts", "/tmp/project"), "/tmp/project/src/file.ts");
+  assert.equal(resolvePreviewPath("@~/file.ts", "/tmp/project").endsWith("/file.ts"), true);
   assert.equal(resolvePreviewPath("~/file.ts", "/tmp/project").endsWith("/file.ts"), true);
 });
 

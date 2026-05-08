@@ -6,6 +6,7 @@ import {
   selectPreviewLines,
   selectPreviewTextLines,
 } from "../format.ts";
+import { positiveEnvInteger } from "../env.ts";
 import { hashString } from "../hash.ts";
 import { getSecretWarnings } from "../secret-warnings.ts";
 import { codePreviewSettings } from "../settings.ts";
@@ -26,23 +27,6 @@ export function countFileLines(content: string): number {
   const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const withoutFinalTerminator = normalized.endsWith("\n") ? normalized.slice(0, -1) : normalized;
   return withoutFinalTerminator.split("\n").length;
-}
-
-export function renderHighlightedPreviewLines(
-  rawLines: string[],
-  limit: number,
-  lang: string | undefined,
-  theme: Theme,
-  invalidate?: () => void,
-  lineNumbers?: { firstLine: number; lineNumberWidth?: number },
-): { lines: string[]; shown: number; hidden: number } {
-  return renderHighlightedPreviewEntries(
-    selectPreviewLines(rawLines, limit),
-    lang,
-    theme,
-    invalidate,
-    lineNumbers,
-  );
 }
 
 export function renderHighlightedPreviewText(
@@ -171,6 +155,7 @@ export function previewCacheKey(
     codePreviewSettings.shikiTheme,
     codePreviewSettings.syntaxHighlighting ? "syntax" : "plain",
     codePreviewSettings.diffIntensity,
+    codePreviewSettings.wordEmphasis,
     String(codePreviewSettings.editCollapsedLines),
     (theme as Theme & { name?: string }).name ?? "",
     source.length,
@@ -186,9 +171,4 @@ function secretScanSample(source: string): string {
   if (source.length <= SECRET_SCAN_CHARS) return source;
   const half = Math.floor(SECRET_SCAN_CHARS / 2);
   return `${source.slice(0, half)}\n${source.slice(-half)}`;
-}
-
-function positiveEnvInteger(name: string, fallback: number): number {
-  const value = Number.parseInt(process.env[name] ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : fallback;
 }
