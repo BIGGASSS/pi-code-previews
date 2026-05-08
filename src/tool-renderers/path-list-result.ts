@@ -3,12 +3,12 @@ import type {
   Theme,
   ToolRenderResultOptions,
 } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
+import { Text, type Component } from "@mariozechner/pi-tui";
 import { getTextContent } from "../data.ts";
-import { hiddenPreviewExpandHint, showingFooter, trimSingleTrailingNewline } from "../format.ts";
+import { showingFooter, trimSingleTrailingNewline } from "../format.ts";
 import { renderPathListLines } from "../path-list-rendering.ts";
 import { escapeControlChars } from "../terminal-text.ts";
-import { renderSelectedOutputLines } from "./common.ts";
+import { renderHiddenPreviewExpandHint, renderSelectedOutputLines } from "./common.ts";
 
 interface PathListResultConfig {
   cwd: string;
@@ -23,6 +23,7 @@ interface PathListResultConfig {
 
 interface PathListRenderContext {
   isError: boolean;
+  state: Record<string, unknown>;
 }
 
 export function renderPathListResult(
@@ -31,7 +32,7 @@ export function renderPathListResult(
   theme: Theme,
   context: PathListRenderContext,
   config: PathListResultConfig,
-): Text {
+): Component {
   if (isPartial) return new Text(theme.fg("warning", config.loadingLabel), 0, 0);
   const output = trimSingleTrailingNewline(getTextContent(result.content));
   if (context.isError)
@@ -40,7 +41,8 @@ export function renderPathListResult(
       0,
       0,
     );
-  if (!expanded && !config.previewEnabled) return new Text(hiddenPreviewExpandHint(theme), 0, 0);
+  if (!expanded && !config.previewEnabled)
+    return renderHiddenPreviewExpandHint(context.state, theme);
   if (!output || output === config.emptyMarker)
     return new Text(theme.fg("muted", config.emptyLabel(output)), 0, 0);
   if (expanded && !config.previewEnabled)

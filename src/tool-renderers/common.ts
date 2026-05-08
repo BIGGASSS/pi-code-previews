@@ -1,8 +1,16 @@
 import type { Theme } from "@mariozechner/pi-coding-agent";
-import { Container, truncateToWidth, visibleWidth, type Component } from "@mariozechner/pi-tui";
+import {
+  Container,
+  Text,
+  truncateToWidth,
+  visibleWidth,
+  type Component,
+} from "@mariozechner/pi-tui";
 import {
   countLabel,
   hiddenLinesMarker,
+  hiddenPreviewExpandHint,
+  hiddenPreviewExpandLabel,
   selectPreviewLines,
   selectPreviewTextLines,
 } from "../format.ts";
@@ -103,11 +111,15 @@ function renderCodePreviewCall<TState, TArgs>(
     previousShell instanceof BorderedToolCall && state.codePreviewBorderTheme === theme;
   const reusedCall = timingOnly ? state.codePreviewBorderCallComponent : undefined;
   const callComponent =
-    reusedCall ?? render(withLastComponent(context, state.codePreviewBorderCallComponent));
+    reusedCall ??
+    renderWithBorderSlot(state, "call", () =>
+      render(withLastComponent(context, state.codePreviewBorderCallComponent)),
+    );
   const timing = updateToolCallTiming(context);
   state.codePreviewBorderCallComponent = callComponent;
   const shell = reuseShell ? previousShell : new BorderedToolCall(theme, state);
   shell.setBorderColor(borderColorKey(context));
+  shell.setLeftLabel(getBorderLeftLabel(state));
   shell.setTimingLabel(timing?.label);
   if (!reusedCall || !reuseShell) shell.setCall(callComponent);
   if (!timingOnly || !reuseShell) shell.setResult(state.codePreviewBorderResultComponent);
@@ -131,18 +143,23 @@ function renderCodePreviewResult<TState, TArgs>(
   const timingOnly = context?.isPartial === true && isToolCallTimingOnlyRender(state);
   const reusedResult = timingOnly ? state.codePreviewBorderResultComponent : undefined;
   const resultComponent =
-    reusedResult ?? render(withLastComponent(context, state.codePreviewBorderResultComponent));
+    reusedResult ??
+    renderWithBorderSlot(state, "result", () =>
+      render(withLastComponent(context, state.codePreviewBorderResultComponent)),
+    );
   state.codePreviewBorderResultComponent = resultComponent;
   if (
     state.codePreviewBorderShell instanceof BorderedToolCall &&
     state.codePreviewBorderTheme === theme
   ) {
     state.codePreviewBorderShell.setBorderColor(borderColorKey(context));
+    state.codePreviewBorderShell.setLeftLabel(getBorderLeftLabel(state));
     state.codePreviewBorderShell.setTimingLabel(timing?.label);
     if (!reusedResult) state.codePreviewBorderShell.setResult(resultComponent);
   } else {
     const shell = new BorderedToolCall(theme, state);
     shell.setBorderColor(borderColorKey(context));
+    shell.setLeftLabel(getBorderLeftLabel(state));
     shell.setTimingLabel(timing?.label);
     shell.setCall(state.codePreviewBorderCallComponent);
     shell.setResult(resultComponent);
@@ -231,8 +248,7 @@ function updateToolCallTiming<TState, TArgs>(
   if (options.formatLabel === false) return undefined;
   const running = context.isPartial === true;
   const endTime = running ? Date.now() : (state.codePreviewTimingEndedAt ?? Date.now());
-  const label = running ? "Elapsed" : "Took";
-  return { label: `${label} ${formatToolCallDuration(endTime - startedAt)}` };
+  return { label: formatToolCallDuration(endTime - startedAt) };
 }
 
 function timingState<TState, TArgs>(
@@ -284,15 +300,36 @@ function formatToolCallDuration(ms: number): string {
   return `${minutes}m ${seconds}s`;
 }
 
+type BorderSlot = "call" | "result";
+
 type BorderState = Record<string, unknown> & {
   codePreviewBorderCallComponent?: Component;
   codePreviewBorderResultComponent?: Component;
   codePreviewBorderShell?: BorderedToolCall;
   codePreviewBorderTheme?: Theme;
+  codePreviewBorderCurrentSlot?: BorderSlot;
+  codePreviewBorderCallLeftLabel?: string;
+  codePreviewBorderResultLeftLabel?: string;
 };
 
 function borderState<TState, TArgs>(context: PreviewRenderContext<TState, TArgs>): BorderState {
   return context.state as BorderState;
+}
+
+function renderWithBorderSlot<T>(state: BorderState, slot: BorderSlot, render: () => T): T {
+  const previousSlot = state.codePreviewBorderCurrentSlot;
+  state.codePreviewBorderCurrentSlot = slot;
+  if (slot === "call") state.codePreviewBorderCallLeftLabel = undefined;
+  else state.codePreviewBorderResultLeftLabel = undefined;
+  try {
+    return render();
+  } finally {
+    state.codePreviewBorderCurrentSlot = previousSlot;
+  }
+}
+
+function getBorderLeftLabel(state: BorderState): string | undefined {
+  return state.codePreviewBorderResultLeftLabel ?? state.codePreviewBorderCallLeftLabel;
 }
 
 type BorderColorKey = "borderMuted" | "warning" | "success" | "error";
@@ -341,6 +378,7 @@ const RESET_ANSI = "\x1b[0m";
 class BorderedToolCall implements Component {
   private callComponent: Component | undefined;
   private borderColorKey: BorderColorKey = "borderMuted";
+  private leftLabel: string | undefined;
   private timingLabel: string | undefined;
   private resultComponent: Component | undefined;
   private cachedWidth: number | undefined;
@@ -359,6 +397,12 @@ class BorderedToolCall implements Component {
 
   setCall(component: Component | undefined): void {
     this.callComponent = component;
+    this.invalidateCache();
+  }
+
+  setLeftLabel(label: string | undefined): void {
+    if (this.leftLabel === label) return;
+    this.leftLabel = label;
     this.invalidateCache();
   }
 
@@ -406,11 +450,21 @@ class BorderedToolCall implements Component {
 
   private renderBottomBorder(width: number, border: (value: string) => string): string {
     const innerWidth = width - 2;
-    if (!this.timingLabel) return border(`╰${"─".repeat(innerWidth)}╯`);
-    const label = ` ${this.timingLabel} `;
-    const labelWidth = label.length;
-    if (labelWidth > innerWidth) return border(`╰${"─".repeat(innerWidth)}╯`);
-    return `${border("╰")}${border("─".repeat(innerWidth - labelWidth))}${this.theme.fg("muted", label)}${border("╯")}`;
+    const leftLabel = this.leftLabel ? ` ${this.leftLabel} ` : "";
+    const rightLabel = this.timingLabel ? this.theme.fg("muted", ` ${this.timingLabel} `) : "";
+    const leftWidth = visibleWidth(leftLabel);
+    const rightWidth = visibleWidth(rightLabel);
+
+    if (leftWidth === 0 && rightWidth === 0) return border(`╰${"─".repeat(innerWidth)}╯`);
+    if (leftWidth + rightWidth > innerWidth) {
+      if (leftWidth > 0 && leftWidth <= innerWidth)
+        return `${border("╰")}${leftLabel}${border("─".repeat(innerWidth - leftWidth))}${border("╯")}`;
+      if (rightWidth > 0 && rightWidth <= innerWidth)
+        return `${border("╰")}${border("─".repeat(innerWidth - rightWidth))}${rightLabel}${border("╯")}`;
+      return border(`╰${"─".repeat(innerWidth)}╯`);
+    }
+
+    return `${border("╰")}${leftLabel}${border("─".repeat(innerWidth - leftWidth - rightWidth))}${rightLabel}${border("╯")}`;
   }
 
   private renderBody(width: number): string[] {
@@ -425,6 +479,26 @@ class BorderedToolCall implements Component {
     const padding = " ".repeat(Math.max(0, innerWidth - visibleWidth(truncated)));
     return `${border("│")} ${truncated}${RESET_ANSI}${padding} ${border("│")}`;
   }
+}
+
+export function hiddenPreviewExpandHintForShell(
+  state: Record<string, unknown>,
+  theme: Theme,
+): string {
+  const borderState = state as BorderState;
+  const slot = borderState.codePreviewBorderCurrentSlot;
+  if (slot !== "call" && slot !== "result") return hiddenPreviewExpandHint(theme);
+  if (slot === "call") borderState.codePreviewBorderCallLeftLabel = hiddenPreviewExpandLabel(theme);
+  else borderState.codePreviewBorderResultLeftLabel = hiddenPreviewExpandLabel(theme);
+  return "";
+}
+
+export function renderHiddenPreviewExpandHint(
+  state: Record<string, unknown>,
+  theme: Theme,
+): Component {
+  const hint = hiddenPreviewExpandHintForShell(state, theme);
+  return hint ? new Text(hint, 0, 0) : new Container();
 }
 
 export function withSecretWarning(source: string, theme: Theme, preview: string): string {

@@ -10,14 +10,7 @@ import {
   summarizeDiff,
 } from "../diff.ts";
 import { describeDiffShape, diffSummarySeparator } from "../diff-summary.ts";
-import {
-  countLabel,
-  formatBytes,
-  hiddenPreviewExpandHint,
-  metadata,
-  previewFooter,
-  showingFooter,
-} from "../format.ts";
+import { countLabel, formatBytes, metadata, previewFooter, showingFooter } from "../format.ts";
 import { resolvePreviewLanguage } from "../language.ts";
 import { renderDisplayPath } from "../paths.ts";
 import { codePreviewSettings } from "../settings.ts";
@@ -33,6 +26,7 @@ import {
   cachedPreview,
   createCodePreviewToolShell,
   countFileLines,
+  hiddenPreviewExpandHintForShell,
   previewCacheKey,
   renderHighlightedPreviewText,
   withSecretWarning,
@@ -73,7 +67,9 @@ export function registerWrite(pi: ExtensionAPI, cwd: string) {
               theme,
               lang,
               countFileLines(content),
-            )}\n${hiddenPreviewExpandHint(theme, "code preview")}`,
+            )}${formatOptionalHiddenHint(
+              hiddenPreviewExpandHintForShell(renderContext.state, theme),
+            )}`,
             0,
             0,
           );
@@ -108,9 +104,6 @@ export function registerWrite(pi: ExtensionAPI, cwd: string) {
         if (renderContext.isError)
           return new Text(theme.fg("error", escapeControlChars(firstText || "Write failed")), 0, 0);
 
-        if (!expanded && !codePreviewSettings.writeContentPreview)
-          return new Text(hiddenPreviewExpandHint(theme, "code preview"), 0, 0);
-
         const path = getPathArg(renderContext.args);
         const content =
           typeof renderContext.args?.content === "string" ? renderContext.args.content : "";
@@ -125,6 +118,14 @@ export function registerWrite(pi: ExtensionAPI, cwd: string) {
             0,
           );
         if (typeof beforeContent === "string" && beforeContent !== content) {
+          if (!expanded && !codePreviewSettings.writeContentPreview)
+            return new Text(
+              `${theme.fg("success", "✓ Write applied")}${formatOptionalHiddenHint(
+                hiddenPreviewExpandHintForShell(renderContext.state, theme),
+              )}`,
+              0,
+              0,
+            );
           if (shouldSkipWriteDiffBytes(beforeContent, content)) {
             return new Text(
               theme.fg("success", "✓ Write applied") +
@@ -165,6 +166,10 @@ export function registerWrite(pi: ExtensionAPI, cwd: string) {
       });
     },
   });
+}
+
+function formatOptionalHiddenHint(hint: string): string {
+  return hint ? `\n${hint}` : "";
 }
 
 function writeCallPreviewSettingsKey(): string {

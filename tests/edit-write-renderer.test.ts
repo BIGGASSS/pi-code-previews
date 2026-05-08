@@ -112,7 +112,7 @@ test("registered edit timing measures execution start to result completion", () 
       },
     );
 
-    assert.match(stripAnsi(renderComponent(result)), /╰─ Took 2\.1s/);
+    assert.match(stripAnsi(renderComponent(result)), /╰─ 2\.1s/);
   } finally {
     vi.restoreAllMocks();
     setCodePreviewSettings(previousSettings);
@@ -147,6 +147,7 @@ test("registered write renderer hides code previews until expanded", () => {
       ),
     );
     assert.match(collapsedCall, /write src\/a\.ts/);
+    assert.match(collapsedCall, /output hidden/);
     assert.match(collapsedCall, /expand/);
     assert.doesNotMatch(collapsedCall, /const after = 2/);
 
@@ -189,8 +190,31 @@ test("registered write renderer hides code previews until expanded", () => {
         ),
       ),
     );
+    assert.match(collapsedResult, /✓ Write applied/);
+    assert.match(collapsedResult, /output hidden/);
     assert.match(collapsedResult, /expand/);
     assert.doesNotMatch(collapsedResult, /const after = 2/);
+
+    const newFileCollapsedResult = stripAnsi(
+      renderComponent(
+        write.renderResult(
+          {
+            content: [{ type: "text", text: "ok" }],
+            details: { codePreviewBeforeWrite: { kind: "missing" } },
+          },
+          { expanded: false, isPartial: false },
+          testTheme(),
+          {
+            args,
+            isError: false,
+            invalidate: () => undefined,
+            state: {},
+          },
+        ),
+      ),
+    );
+    assert.match(newFileCollapsedResult, /✓ New file/);
+    assert.doesNotMatch(newFileCollapsedResult, /output hidden/);
 
     const expandedResult = stripAnsi(
       renderComponent(

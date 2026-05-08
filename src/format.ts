@@ -131,11 +131,12 @@ export function themedKeyHint(
   return theme.fg("dim", keyText) + theme.fg("muted", ` ${description}`);
 }
 
-export function hiddenPreviewExpandHint(theme: Theme, subject = "output"): string {
-  return theme.fg(
-    "muted",
-    `╰─ ${subject} hidden - ${themedKeyHint(theme, "app.tools.expand", "expand")}`,
-  );
+export function hiddenPreviewExpandLabel(theme: Theme): string {
+  return `${theme.fg("muted", "output hidden - ")}${themedKeyHint(theme, "app.tools.expand", "expand")}`;
+}
+
+export function hiddenPreviewExpandHint(theme: Theme): string {
+  return `${theme.fg("muted", "╰─ ")}${hiddenPreviewExpandLabel(theme)}`;
 }
 
 export function showingFooter(theme: Theme, shown: number, total: number, label: string): string {

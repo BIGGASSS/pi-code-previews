@@ -175,6 +175,51 @@ test("registered renderers can use a self shell when tool backgrounds are disabl
   }
 });
 
+test("border mode puts hidden output expand hints in the bottom-left border", () => {
+  process.env.CODE_PREVIEW_TOOLS = "bash";
+  setCodePreviewSettings({
+    ...defaultCodePreviewSettings,
+    toolCallBackground: "border",
+    bashResultPreview: false,
+  });
+  try {
+    const bash = findRenderer(registerRenderers(), "bash");
+    assert.ok(bash.renderCall);
+    assert.ok(bash.renderResult);
+
+    const state = {};
+    const theme = testTheme();
+    const context = {
+      args: { command: "echo hidden" },
+      argsComplete: true,
+      cwd: "/tmp/project",
+      executionStarted: false,
+      expanded: false,
+      invalidate: () => undefined,
+      isError: false,
+      isPartial: false,
+      lastComponent: undefined,
+      showImages: true,
+      state,
+      toolCallId: "tool-1",
+    };
+    const call = bash.renderCall(context.args, theme, context);
+    const result = bash.renderResult(
+      { content: [{ type: "text", text: "hidden output" }], details: {} },
+      { expanded: false, isPartial: false },
+      theme,
+      context,
+    );
+
+    assert.equal(stripAnsi(renderComponent(result, 72)), "");
+    const rendered = stripAnsi(renderComponent(call, 72));
+    assert.doesNotMatch(rendered, /│ .*output hidden/);
+    assert.match(rendered, /╰ output hidden - .*expand .+╯$/);
+  } finally {
+    setCodePreviewSettings(defaultCodePreviewSettings);
+  }
+});
+
 test("border mode wraps tool call and result in a status-colored border-only shell", () => {
   process.env.CODE_PREVIEW_TOOLS = "bash";
   setCodePreviewSettings({

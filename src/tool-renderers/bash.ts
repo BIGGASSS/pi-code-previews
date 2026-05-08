@@ -5,7 +5,6 @@ import { getBashWarnings } from "../bash-warnings.ts";
 import { getObjectValue, getTextContent, isTruncated } from "../data.ts";
 import {
   countLabel,
-  hiddenPreviewExpandHint,
   previewFooter,
   previewLines,
   showingFooter,
@@ -14,7 +13,11 @@ import {
 import { codePreviewSettings } from "../settings.ts";
 import { renderHighlightedText } from "../shiki.ts";
 import { escapeControlChars } from "../terminal-text.ts";
-import { createCodePreviewToolShell, withSecretWarning } from "./common.ts";
+import {
+  createCodePreviewToolShell,
+  renderHiddenPreviewExpandHint,
+  withSecretWarning,
+} from "./common.ts";
 
 export function registerBash(pi: ExtensionAPI, cwd: string, options?: BashToolOptions) {
   const originalBash = createBashToolDefinition(cwd, options);
@@ -51,7 +54,7 @@ export function registerBash(pi: ExtensionAPI, cwd: string, options?: BashToolOp
       return previewShell.renderResult(context, theme, (renderContext) => {
         if (isPartial) return new Text(theme.fg("warning", "Running…"), 0, 0);
         if (!expanded && !renderContext.isError && shouldHideBashResult(renderContext.args))
-          return new Text(hiddenPreviewExpandHint(theme), 0, 0);
+          return renderHiddenPreviewExpandHint(renderContext.state, theme);
         const output = trimSingleTrailingNewline(getTextContent(result.content));
         const lines = output
           ? output

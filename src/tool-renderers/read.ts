@@ -2,7 +2,7 @@ import type { ExtensionAPI, ReadToolOptions } from "@mariozechner/pi-coding-agen
 import { createReadToolDefinition, getLanguageFromPath } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { getPathArg, getReadStartLine, getTextContent, isTruncated } from "../data.ts";
-import { hiddenPreviewExpandHint, metadata, previewFooter, showingFooter } from "../format.ts";
+import { metadata, previewFooter, showingFooter } from "../format.ts";
 import { resolvePreviewLanguage } from "../language.ts";
 import { renderDisplayPath } from "../paths.ts";
 import { codePreviewSettings } from "../settings.ts";
@@ -10,6 +10,7 @@ import { normalizeShikiLanguage, shouldSkipHighlight } from "../shiki.ts";
 import { escapeControlChars } from "../terminal-text.ts";
 import {
   createCodePreviewToolShell,
+  renderHiddenPreviewExpandHint,
   renderHighlightedPreviewText,
   withSecretWarning,
 } from "./common.ts";
@@ -62,7 +63,7 @@ export function registerRead(pi: ExtensionAPI, cwd: string, options?: ReadToolOp
         }
 
         if (!expanded && !codePreviewSettings.readContentPreview)
-          return new Text(hiddenPreviewExpandHint(theme), 0, 0);
+          return renderHiddenPreviewExpandHint(renderContext.state, theme);
 
         const lang = resolvePreviewLanguage({
           path,

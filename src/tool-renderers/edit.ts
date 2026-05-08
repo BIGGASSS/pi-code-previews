@@ -11,13 +11,7 @@ import {
   summarizeDiff,
 } from "../diff.ts";
 import { diffSummarySeparator, type DiffSummary } from "../diff-summary.ts";
-import {
-  countLabel,
-  hiddenPreviewExpandHint,
-  previewFooter,
-  showingFooter,
-  themedKeyHint,
-} from "../format.ts";
+import { countLabel, previewFooter, showingFooter } from "../format.ts";
 import { resolvePreviewLanguage } from "../language.ts";
 import { renderDisplayPath } from "../paths.ts";
 import { codePreviewSettings } from "../settings.ts";
@@ -29,6 +23,7 @@ import {
   createCodePreviewToolShell,
   previewArgsKey,
   previewCacheKey,
+  renderHiddenPreviewExpandHint,
 } from "./common.ts";
 
 export function registerEdit(pi: ExtensionAPI, cwd: string) {
@@ -69,10 +64,7 @@ export function registerEdit(pi: ExtensionAPI, cwd: string) {
           return text;
 
         if (!renderContext.expanded && !codePreviewSettings.editDiffPreview)
-          return new HeaderAndBody(
-            text,
-            new Text(hiddenPreviewExpandHint(theme, "diff preview"), 0, 0),
-          );
+          return new HeaderAndBody(text, renderHiddenPreviewExpandHint(renderContext.state, theme));
 
         const previewKey = previewCacheKey(
           "edit-call",
@@ -138,10 +130,8 @@ export function registerEdit(pi: ExtensionAPI, cwd: string) {
             ? summary.totalLines
             : codePreviewSettings.editCollapsedLines;
         renderContext.state.editSummaryText = formatEditSummary(summary, limit, theme);
-        if (!expanded && (hidePreview || summary.totalLines > limit))
-          renderContext.state.editSummaryText += ` (${themedKeyHint(theme, "app.tools.expand", "expand")})`;
         updateEditHeader(renderContext, cwd, theme);
-        if (hidePreview) return new Text(hiddenPreviewExpandHint(theme, "diff preview"), 0, 0);
+        if (hidePreview) return renderHiddenPreviewExpandHint(renderContext.state, theme);
         const render = () =>
           renderEditDiffPreview(
             diff,
@@ -240,7 +230,6 @@ function renderEditCallPreview(
   const summaries = diffs.map((diff) => summarizeDiff(diff));
   const totalAdditions = summaries.reduce((total, summary) => total + summary.additions, 0);
   const totalRemovals = summaries.reduce((total, summary) => total + summary.removals, 0);
-  const totalLines = summaries.reduce((total, summary) => total + summary.totalLines, 0);
 
   for (let index = 0; index < maxOperations; index++) {
     const diff = diffs[index]!;
@@ -266,16 +255,6 @@ function renderEditCallPreview(
   const header = `${theme.fg("muted", "proposed edit")} ${theme.fg("success", `+${totalAdditions}`)} ${theme.fg("error", `-${totalRemovals}`)}${operations.length > 1 ? theme.fg("muted", ` · ${operations.length} edit blocks`) : ""}`;
   let text = `${header}\n${sections.join("\n")}`;
   if (remainder > 0) text += showingFooter(theme, maxOperations, operations.length, "edit blocks");
-  else if (
-    !expanded &&
-    operations.length === 1 &&
-    totalLines >
-      (typeof codePreviewSettings.editCollapsedLines === "number"
-        ? codePreviewSettings.editCollapsedLines
-        : totalLines)
-  ) {
-    text += ` (${themedKeyHint(theme, "app.tools.expand", "expand")})`;
-  }
   return new FullWidthDiffText(text, theme);
 }
 
