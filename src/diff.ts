@@ -31,18 +31,7 @@ export class FullWidthDiffText implements Component {
   render(width: number): string[] {
     if (this.cachedWidth === width && this.cachedRows) return this.cachedRows;
     const rows = this.text.split("\n").flatMap((rawLine) => {
-      const kind = rawLine.startsWith(DIFF_ADD_MARKER)
-        ? "add"
-        : rawLine.startsWith(DIFF_REMOVE_MARKER)
-          ? "remove"
-          : undefined;
-      const line =
-        kind === "add"
-          ? rawLine.slice(DIFF_ADD_MARKER.length)
-          : kind === "remove"
-            ? rawLine.slice(DIFF_REMOVE_MARKER.length)
-            : rawLine;
-
+      const { kind, line } = parseMarkedDiffLine(rawLine);
       const rows = wrapAnsiToWidth(line, width, DIFF_WRAP_ROWS, continuationPrefix(line));
       if (!kind) return rows.map((row) => truncateToWidth(row, width, ""));
 
@@ -64,6 +53,16 @@ export class FullWidthDiffText implements Component {
 }
 
 const DIFF_WRAP_ROWS = positiveEnvInteger("CODE_PREVIEW_DIFF_WRAP_ROWS", 3);
+
+type MarkedDiffLine = { kind?: "add" | "remove"; line: string };
+
+function parseMarkedDiffLine(rawLine: string): MarkedDiffLine {
+  if (rawLine.startsWith(DIFF_ADD_MARKER))
+    return { kind: "add", line: rawLine.slice(DIFF_ADD_MARKER.length) };
+  if (rawLine.startsWith(DIFF_REMOVE_MARKER))
+    return { kind: "remove", line: rawLine.slice(DIFF_REMOVE_MARKER.length) };
+  return { line: rawLine };
+}
 
 function continuationPrefix(line: string): string {
   const pipe = line.indexOf("│ ");
@@ -481,15 +480,10 @@ function diffLineBg(kind: "add" | "remove", line: string, theme?: Theme): string
   // Full-width subtle backgrounds for changed lines. Re-apply after foreground
   // resets emitted by Shiki so token coloring does not punch holes in the bg.
   if (codePreviewSettings.diffIntensity === "off") return line;
+  const intensity = codePreviewSettings.diffIntensity;
   const bg =
-    deriveDiffBg(kind, theme, codePreviewSettings.diffIntensity === "medium" ? 0.24 : 0.14) ??
-    (kind === "add"
-      ? codePreviewSettings.diffIntensity === "medium"
-        ? "\x1b[48;2;22;68;40m"
-        : "\x1b[48;2;10;42;26m"
-      : codePreviewSettings.diffIntensity === "medium"
-        ? "\x1b[48;2;78;36;40m"
-        : "\x1b[48;2;50;24;30m");
+    deriveDiffBg(kind, theme, intensity === "medium" ? 0.24 : 0.14) ??
+    fallbackDiffBg(kind, intensity);
   const coloredLine = line
     .replace(/\x1b\[39m/g, `\x1b[39m${bg}`)
     .replace(/\x1b\[49m/g, `\x1b[49m${bg}`);
@@ -497,6 +491,11 @@ function diffLineBg(kind: "add" | "remove", line: string, theme?: Theme): string
   // the final right-padding cell before resetting the tool background, so that
   // padding inherits the diff background without the child exceeding its width.
   return bg + coloredLine;
+}
+
+function fallbackDiffBg(kind: "add" | "remove", intensity: "subtle" | "medium"): string {
+  if (kind === "add") return intensity === "medium" ? "\x1b[48;2;22;68;40m" : "\x1b[48;2;10;42;26m";
+  return intensity === "medium" ? "\x1b[48;2;78;36;40m" : "\x1b[48;2;50;24;30m";
 }
 
 function deriveDiffBg(

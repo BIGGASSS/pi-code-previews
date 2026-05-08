@@ -44,19 +44,23 @@ function renderTreePath(
     if (!isLeaf || isDir) {
       if (!seenDirs.has(key)) {
         seenDirs.add(key);
-        const icon = pathIcon(part, true, codePreviewSettings.pathIcons);
-        rendered.push(
-          `${theme.fg("dim", icon ? `${indent}${icon}` : indent)}${icon ? " " : ""}${theme.fg("accent", `${escapeControlChars(part)}/`)}`,
-        );
+        rendered.push(renderTreeEntry(part, true, indent, theme));
       }
     } else {
-      const icon = pathIcon(part, false, codePreviewSettings.pathIcons);
-      rendered.push(
-        `${theme.fg("dim", icon ? `${indent}${icon}` : indent)}${icon ? " " : ""}${theme.fg("toolOutput", escapeControlChars(part))}`,
-      );
+      rendered.push(renderTreeEntry(part, false, indent, theme));
     }
     prefix = key;
   }
+}
+
+function renderTreeEntry(part: string, isDirectory: boolean, indent: string, theme: Theme): string {
+  const icon = pathIcon(part, isDirectory, codePreviewSettings.pathIcons);
+  const iconText = icon ? `${indent}${icon}` : indent;
+  const gap = icon ? " " : "";
+  const label = isDirectory
+    ? theme.fg("accent", `${escapeControlChars(part)}/`)
+    : theme.fg("toolOutput", escapeControlChars(part));
+  return `${theme.fg("dim", iconText)}${gap}${label}`;
 }
 
 function renderPathListLine(line: string, cwd: string, theme: Theme): string {
@@ -66,5 +70,7 @@ function renderPathListLine(line: string, cwd: string, theme: Theme): string {
   const prefix = line.match(/^\s*/)?.[0] ?? "";
   const body = line.slice(prefix.length);
   const icon = pathIcon(body, body.endsWith("/"), codePreviewSettings.pathIcons);
-  return `${theme.fg("dim", icon ? prefix + icon : prefix)}${icon ? " " : ""}${renderDisplayPath(body, cwd, theme, body)}`;
+  const iconText = icon ? prefix + icon : prefix;
+  const gap = icon ? " " : "";
+  return `${theme.fg("dim", iconText)}${gap}${renderDisplayPath(body, cwd, theme, body)}`;
 }

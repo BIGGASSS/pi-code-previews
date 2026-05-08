@@ -18,10 +18,8 @@ const originalHome = process.env.HOME;
 const originalSettings = { ...codePreviewSettings, tools: [...codePreviewSettings.tools] };
 
 afterEach(() => {
-  if (originalPiCodingAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
-  else process.env.PI_CODING_AGENT_DIR = originalPiCodingAgentDir;
-  if (originalHome === undefined) delete process.env.HOME;
-  else process.env.HOME = originalHome;
+  restoreEnv("PI_CODING_AGENT_DIR", originalPiCodingAgentDir);
+  restoreEnv("HOME", originalHome);
   setCodePreviewSettings(originalSettings);
 });
 
@@ -137,6 +135,11 @@ type CustomFactory = (
 interface SettingsListInternals {
   onChange(id: string, value: string): void;
   onCancel(): void;
+}
+
+function restoreEnv(name: string, value: string | undefined): void {
+  if (value === undefined) delete process.env[name];
+  else process.env[name] = value;
 }
 
 async function loadCommandsOnly(): Promise<

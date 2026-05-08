@@ -38,15 +38,15 @@ export const defaultCodePreviewSettings: CodePreviewSettings = {
   shikiTheme: envTheme("CODE_PREVIEW_THEME", "dark-plus"),
   diffIntensity: envDiffIntensity("CODE_PREVIEW_DIFF_INTENSITY", "subtle"),
   wordEmphasis: envDiffWordEmphasis("CODE_PREVIEW_WORD_EMPHASIS", "all"),
-  readCollapsedLines: envNumber("CODE_PREVIEW_READ_LINES", 10),
+  readCollapsedLines: positiveEnvInteger("CODE_PREVIEW_READ_LINES", 10),
   readContentPreview: envBoolean("CODE_PREVIEW_READ_CONTENT", true),
-  writeCollapsedLines: envNumber("CODE_PREVIEW_WRITE_LINES", 10),
+  writeCollapsedLines: positiveEnvInteger("CODE_PREVIEW_WRITE_LINES", 10),
   editCollapsedLines: envEditLines("CODE_PREVIEW_EDIT_LINES", 160),
-  grepCollapsedLines: envNumber("CODE_PREVIEW_GREP_LINES", 15),
+  grepCollapsedLines: positiveEnvInteger("CODE_PREVIEW_GREP_LINES", 15),
   grepResultPreview: envBoolean("CODE_PREVIEW_GREP_RESULTS", true),
   findResultPreview: envBoolean("CODE_PREVIEW_FIND_RESULTS", true),
   lsResultPreview: envBoolean("CODE_PREVIEW_LS_RESULTS", true),
-  pathListCollapsedLines: envNumber("CODE_PREVIEW_PATH_LIST_LINES", 20),
+  pathListCollapsedLines: positiveEnvInteger("CODE_PREVIEW_PATH_LIST_LINES", 20),
   readLineNumbers: envBoolean("CODE_PREVIEW_READ_LINE_NUMBERS", true),
   bashResultPreview: envBoolean("CODE_PREVIEW_BASH_RESULTS", true),
   bashWarnings: envBoolean("CODE_PREVIEW_BASH_WARNINGS", true),
@@ -251,10 +251,6 @@ function envTheme(name: string, fallback: string): string {
   return isBundledThemeName(value) ? value : fallback;
 }
 
-function envNumber(name: string, fallback: number): number {
-  return positiveEnvInteger(name, fallback);
-}
-
 function envBoolean(name: string, fallback: boolean): boolean {
   const value = process.env[name]?.toLowerCase();
   if (value === undefined) return fallback;
@@ -292,8 +288,7 @@ function coerceNumber(value: unknown, fallback: number): number {
 }
 
 function coerceStringNumber(value: string, fallback: number): number {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) && numeric > 0 ? Math.floor(numeric) : fallback;
+  return parsePositiveInteger(value) ?? fallback;
 }
 
 function coerceEditPreviewLines(value: unknown, fallback: number | "all"): number | "all" {

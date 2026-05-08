@@ -38,14 +38,14 @@ export default async function codePreviews(pi: ExtensionAPI) {
       const pendingTools = formatPendingCodePreviewTools();
       const lines = [
         "Code preview health",
-        `Shiki initialized: ${status.initialized ? "yes" : "no"}`,
+        `Shiki initialized: ${yesNo(status.initialized)}`,
         `Shiki theme: ${codePreviewSettings.shikiTheme}`,
-        `Syntax highlighting: ${codePreviewSettings.syntaxHighlighting ? "on" : "off"}`,
-        `Read content preview: ${codePreviewSettings.readContentPreview ? "on" : "off"}`,
-        `Grep result preview: ${codePreviewSettings.grepResultPreview ? "on" : "off"}`,
-        `Find result preview: ${codePreviewSettings.findResultPreview ? "on" : "off"}`,
-        `Ls result preview: ${codePreviewSettings.lsResultPreview ? "on" : "off"}`,
-        `Bash result preview: ${codePreviewSettings.bashResultPreview ? "on" : "off"}`,
+        `Syntax highlighting: ${onOff(codePreviewSettings.syntaxHighlighting)}`,
+        `Read content preview: ${onOff(codePreviewSettings.readContentPreview)}`,
+        `Grep result preview: ${onOff(codePreviewSettings.grepResultPreview)}`,
+        `Find result preview: ${onOff(codePreviewSettings.findResultPreview)}`,
+        `Ls result preview: ${onOff(codePreviewSettings.lsResultPreview)}`,
+        `Bash result preview: ${onOff(codePreviewSettings.bashResultPreview)}`,
         `Word-level diff emphasis: ${codePreviewSettings.wordEmphasis}`,
         `Configured tools: ${formatEnabledCodePreviewTools()}`,
         `Active previews: ${formatActiveCodePreviewTools()}`,
@@ -174,6 +174,14 @@ function cloneSettingsForSave(settings: CodePreviewSettings): CodePreviewSetting
 
 function formatSettingsSaveError(error: unknown): string {
   return `Failed to save code preview settings: ${error instanceof Error ? error.message : String(error)}`;
+}
+
+function onOff(value: boolean): "on" | "off" {
+  return value ? "on" : "off";
+}
+
+function yesNo(value: boolean): "yes" | "no" {
+  return value ? "yes" : "no";
 }
 
 function syncSettingsListValues(list: SettingsList): void {

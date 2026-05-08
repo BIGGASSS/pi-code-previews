@@ -1,4 +1,5 @@
 import type { SourceInfo } from "@mariozechner/pi-coding-agent";
+import { formatToolsSettingValue } from "./settings.ts";
 import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-names.ts";
 
 export type CodePreviewToolStatus =
@@ -65,8 +66,7 @@ function formatToolsWithState(
   statuses: Map<CodePreviewToolName, CodePreviewToolStatus>,
   state: CodePreviewToolStatus["state"],
 ): string {
-  return (
-    ALL_CODE_PREVIEW_TOOLS.filter((tool) => statuses.get(tool)?.state === state).join(", ") ||
-    "none"
+  return formatToolsSettingValue(
+    ALL_CODE_PREVIEW_TOOLS.filter((tool) => statuses.get(tool)?.state === state),
   );
 }

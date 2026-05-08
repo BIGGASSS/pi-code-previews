@@ -57,13 +57,29 @@ function registerToolRenderer(
   cwd: string,
   options: BuiltinToolOptions,
 ): void {
-  if (tool === "bash") registerBash(pi, cwd, options.bash);
-  else if (tool === "read") registerRead(pi, cwd, options.read);
-  else if (tool === "write") registerWrite(pi, cwd);
-  else if (tool === "edit") registerEdit(pi, cwd);
-  else if (tool === "grep") registerGrep(pi, cwd);
-  else if (tool === "find") registerFind(pi, cwd);
-  else if (tool === "ls") registerLs(pi, cwd);
+  switch (tool) {
+    case "bash":
+      registerBash(pi, cwd, options.bash);
+      break;
+    case "read":
+      registerRead(pi, cwd, options.read);
+      break;
+    case "write":
+      registerWrite(pi, cwd);
+      break;
+    case "edit":
+      registerEdit(pi, cwd);
+      break;
+    case "grep":
+      registerGrep(pi, cwd);
+      break;
+    case "find":
+      registerFind(pi, cwd);
+      break;
+    case "ls":
+      registerLs(pi, cwd);
+      break;
+  }
 }
 
 function syncActiveCodePreviewTools(

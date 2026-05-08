@@ -64,6 +64,8 @@ function renderHighlightedPreviewEntries(
   lineNumbers?: { firstLine: number; lineNumberWidth?: number },
 ): { lines: string[]; shown: number; hidden: number } {
   const lines: string[] = [];
+  const lineNumberOptions =
+    lineNumbers && codePreviewSettings.readLineNumbers ? lineNumbers : undefined;
   let chunk: Array<{ line: string; index: number }> = [];
 
   function flushChunk(): void {
@@ -74,13 +76,17 @@ function renderHighlightedPreviewEntries(
       const rendered =
         highlighted[index] ??
         theme.fg("toolOutput", escapeControlChars(normalizedChunk[index] ?? ""));
-      if (!lineNumbers || !codePreviewSettings.readLineNumbers) {
+      if (!lineNumberOptions) {
         lines.push(rendered);
         continue;
       }
       const width =
-        lineNumbers.lineNumberWidth ?? String(lineNumbers.firstLine + chunk[index]!.index).length;
-      const lineNumber = String(lineNumbers.firstLine + chunk[index]!.index).padStart(width, " ");
+        lineNumberOptions.lineNumberWidth ??
+        String(lineNumberOptions.firstLine + chunk[index]!.index).length;
+      const lineNumber = String(lineNumberOptions.firstLine + chunk[index]!.index).padStart(
+        width,
+        " ",
+      );
       lines.push(`${theme.fg("dim", `${lineNumber} │ `)}${rendered}`);
     }
     chunk = [];
