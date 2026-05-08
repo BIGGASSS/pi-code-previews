@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { afterEach, test } from "vitest";
 import { defaultCodePreviewSettings } from "../src/settings.ts";
 import {
@@ -12,10 +12,15 @@ import {
 } from "../src/settings-store.ts";
 
 const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
+const originalHome = process.env.HOME;
+const originalCwd = process.cwd();
 
 afterEach(() => {
   if (originalPiCodingAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
   else process.env.PI_CODING_AGENT_DIR = originalPiCodingAgentDir;
+  if (originalHome === undefined) delete process.env.HOME;
+  else process.env.HOME = originalHome;
+  process.chdir(originalCwd);
 });
 
 test("getSettingsPath uses Pi's agent directory resolution", () => {
@@ -67,5 +72,82 @@ test("extractCodePreviewSettings accepts nested, prefixed, and saved raw setting
       .readCollapsedLines,
     40,
   );
+  assert.deepEqual(extractCodePreviewSettings({ pathIcons: "off" }), { pathIcons: "off" });
   assert.deepEqual(extractCodePreviewSettings({ theme: "dark" }), {});
 });
+
+test("loadSettingsFromDisk merges settings in precedence order", async () => {
+  const root = await mkdtemp(join(tmpdir(), "pi-code-previews-precedence-"));
+  const home = join(root, "home");
+  const agentDir = join(root, "agent");
+  const project = join(root, "project");
+  process.env.HOME = home;
+  process.env.PI_CODING_AGENT_DIR = agentDir;
+  await mkdir(join(home, ".pi", "agent"), { recursive: true });
+  await mkdir(agentDir, { recursive: true });
+  await mkdir(join(project, ".pi"), { recursive: true });
+  process.chdir(project);
+
+  await writeJson(join(home, ".pi", "settings.json"), {
+    codePreview: { readCollapsedLines: 11, writeCollapsedLines: 21 },
+  });
+  await writeJson(join(home, ".pi", "agent", "settings.json"), {
+    codePreview: { readCollapsedLines: 12, grepCollapsedLines: 22 },
+  });
+  await writeJson(join(agentDir, "settings.json"), {
+    codePreview: { readCollapsedLines: 13, findResultPreview: false },
+  });
+  await writeJson(join(project, ".pi", "settings.json"), {
+    codePreview: { readCollapsedLines: 14, lsResultPreview: false },
+  });
+  await writeJson(join(home, ".pi", "agent", "code-previews.json"), {
+    readCollapsedLines: 15,
+    bashResultPreview: false,
+  });
+  await writeJson(join(agentDir, "code-previews.json"), {
+    readCollapsedLines: 16,
+    pathListCollapsedLines: 44,
+  });
+
+  const loaded = await loadSettingsFromDisk();
+  assert.equal(loaded?.readCollapsedLines, 16);
+  assert.equal(loaded?.writeCollapsedLines, 21);
+  assert.equal(loaded?.grepCollapsedLines, 22);
+  assert.equal(loaded?.findResultPreview, false);
+  assert.equal(loaded?.lsResultPreview, false);
+  assert.equal(loaded?.bashResultPreview, false);
+  assert.equal(loaded?.pathListCollapsedLines, 44);
+});
+
+test("loadSettingsFromDisk warns on invalid JSON and continues", async () => {
+  const root = await mkdtemp(join(tmpdir(), "pi-code-previews-invalid-settings-"));
+  const home = join(root, "home");
+  const agentDir = join(root, "agent");
+  process.env.HOME = home;
+  process.env.PI_CODING_AGENT_DIR = agentDir;
+  await mkdir(join(home, ".pi", "agent"), { recursive: true });
+  await mkdir(agentDir, { recursive: true });
+  await writeJson(join(home, ".pi", "settings.json"), {
+    codePreview: { readCollapsedLines: 18 },
+  });
+  await writeFile(join(home, ".pi", "agent", "settings.json"), "{invalid", "utf8");
+  await writeJson(join(agentDir, "code-previews.json"), { grepCollapsedLines: 31 });
+
+  const originalWarn = console.warn;
+  const warnings: unknown[][] = [];
+  console.warn = (...args: unknown[]) => warnings.push(args);
+  try {
+    const loaded = await loadSettingsFromDisk();
+    assert.equal(loaded?.readCollapsedLines, 18);
+    assert.equal(loaded?.grepCollapsedLines, 31);
+    assert.equal(warnings.length, 1);
+    assert.match(String(warnings[0]?.[0]), /Failed to load settings/);
+  } finally {
+    console.warn = originalWarn;
+  }
+});
+
+async function writeJson(path: string, data: unknown): Promise<void> {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, `${JSON.stringify(data)}\n`, "utf8");
+}

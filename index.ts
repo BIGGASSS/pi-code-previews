@@ -3,7 +3,7 @@ import { getSettingsListTheme } from "@mariozechner/pi-coding-agent";
 import { SettingsList, truncateToWidth, visibleWidth, type Component } from "@mariozechner/pi-tui";
 import { registerToolRenderers } from "./src/renderers.ts";
 import { getSettingsPath, loadSettingsFromDisk, saveSettingsToDisk } from "./src/settings-store.ts";
-import { createSettingsItems } from "./src/settings-ui.ts";
+import { createSettingsItems, formatToolsSettingValue } from "./src/settings-ui.ts";
 import {
   setCodePreviewSettings,
   codePreviewSettings,
@@ -27,6 +27,7 @@ export default async function codePreviews(pi: ExtensionAPI) {
   if (savedSettings) setCodePreviewSettings(savedSettings);
   if (codePreviewSettings.syntaxHighlighting) void initializeShiki(codePreviewSettings.shikiTheme);
   const registeredTools = new Set<CodePreviewToolName>();
+  const activatedTools = new Set<CodePreviewToolName>();
 
   pi.registerCommand("code-preview-health", {
     description: "Show code preview renderer health and settings",
@@ -108,7 +109,7 @@ export default async function codePreviews(pi: ExtensionAPI) {
   });
 
   pi.on("session_start", (_event, ctx) => {
-    registerToolRenderers(pi, ctx.cwd, { registeredTools });
+    registerToolRenderers(pi, ctx.cwd, { registeredTools, activatedTools });
   });
 }
 
@@ -178,7 +179,7 @@ function syncSettingsListValues(list: SettingsList): void {
   list.updateValue("shikiTheme", codePreviewSettings.shikiTheme);
   list.updateValue("diffIntensity", codePreviewSettings.diffIntensity);
   list.updateValue("wordEmphasis", codePreviewSettings.wordEmphasis);
-  list.updateValue("tools", codePreviewSettings.tools.join(", "));
+  list.updateValue("tools", formatToolsSettingValue(codePreviewSettings.tools));
   list.updateValue("readContentPreview", codePreviewSettings.readContentPreview ? "on" : "off");
   list.updateValue("readCollapsedLines", String(codePreviewSettings.readCollapsedLines));
   list.updateValue("writeCollapsedLines", String(codePreviewSettings.writeCollapsedLines));

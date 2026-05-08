@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { createSettingsItems } from "../src/settings-ui.ts";
 import {
   codePreviewSettings,
   defaultCodePreviewSettings,
@@ -114,4 +115,129 @@ test("individual tool toggles update configured previews", () => {
 
   const withGrep = updateSetting(withoutGrep, "tool:grep", "on");
   assert.deepEqual(withGrep.tools, defaultCodePreviewSettings.tools);
+});
+
+test("settings UI item values are handled by updateSetting", () => {
+  const uiIds = new Set(createSettingsItems(defaultCodePreviewSettings).map((item) => item.id));
+  const handledIds = new Set([
+    "shikiTheme",
+    "diffIntensity",
+    "wordEmphasis",
+    "tools",
+    "readContentPreview",
+    "readCollapsedLines",
+    "writeCollapsedLines",
+    "editCollapsedLines",
+    "grepResultPreview",
+    "grepCollapsedLines",
+    "findResultPreview",
+    "lsResultPreview",
+    "pathListCollapsedLines",
+    "readLineNumbers",
+    "pathIcons",
+    "bashResultPreview",
+    "bashWarnings",
+    "syntaxHighlighting",
+    "secretWarnings",
+    "resetToDefaults",
+  ]);
+  assert.deepEqual([...uiIds].filter((id) => id !== "settingsFile").sort(), [...handledIds].sort());
+
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "shikiTheme", "github-dark").shikiTheme,
+    "github-dark",
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "diffIntensity", "medium").diffIntensity,
+    "medium",
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "wordEmphasis", "smart").wordEmphasis,
+    "smart",
+  );
+  assert.deepEqual(updateSetting(defaultCodePreviewSettings, "tools", "none").tools, []);
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "readContentPreview", "off").readContentPreview,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "readCollapsedLines", "20").readCollapsedLines,
+    20,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "writeCollapsedLines", "20").writeCollapsedLines,
+    20,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "editCollapsedLines", "all").editCollapsedLines,
+    "all",
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "grepResultPreview", "off").grepResultPreview,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "grepCollapsedLines", "25").grepCollapsedLines,
+    25,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "findResultPreview", "off").findResultPreview,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "lsResultPreview", "off").lsResultPreview,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "pathListCollapsedLines", "40")
+      .pathListCollapsedLines,
+    40,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "readLineNumbers", "off").readLineNumbers,
+    false,
+  );
+  assert.equal(updateSetting(defaultCodePreviewSettings, "pathIcons", "off").pathIcons, "off");
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "bashResultPreview", "off").bashResultPreview,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "bashWarnings", "off").bashWarnings,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "syntaxHighlighting", "off").syntaxHighlighting,
+    false,
+  );
+  assert.equal(
+    updateSetting(defaultCodePreviewSettings, "secretWarnings", "off").secretWarnings,
+    false,
+  );
+  assert.deepEqual(
+    updateSetting(
+      { ...defaultCodePreviewSettings, readCollapsedLines: 21 },
+      "resetToDefaults",
+      "reset now",
+    ),
+    defaultCodePreviewSettings,
+  );
+});
+
+test("empty tool selections stay explicit in the settings UI", () => {
+  const items = createSettingsItems({ ...defaultCodePreviewSettings, tools: [] });
+  assert.equal(items.find((item) => item.id === "tools")?.currentValue, "none");
+  assert.deepEqual(updateSetting(defaultCodePreviewSettings, "tools", "none").tools, []);
+});
+
+test("invalid setting updates preserve current values", () => {
+  const current = {
+    ...defaultCodePreviewSettings,
+    diffIntensity: "medium" as const,
+    pathIcons: "nerd" as const,
+    readCollapsedLines: 33,
+  };
+  assert.equal(updateSetting(current, "diffIntensity", "loud").diffIntensity, "medium");
+  assert.equal(updateSetting(current, "pathIcons", "emoji").pathIcons, "nerd");
+  assert.equal(updateSetting(current, "readCollapsedLines", "nope").readCollapsedLines, 33);
 });

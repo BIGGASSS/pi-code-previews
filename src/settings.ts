@@ -33,6 +33,28 @@ export interface CodePreviewSettings {
   tools: CodePreviewToolName[];
 }
 
+export const CODE_PREVIEW_SETTING_KEYS = [
+  "shikiTheme",
+  "diffIntensity",
+  "wordEmphasis",
+  "readCollapsedLines",
+  "readContentPreview",
+  "writeCollapsedLines",
+  "editCollapsedLines",
+  "grepCollapsedLines",
+  "grepResultPreview",
+  "findResultPreview",
+  "lsResultPreview",
+  "pathListCollapsedLines",
+  "readLineNumbers",
+  "bashResultPreview",
+  "bashWarnings",
+  "syntaxHighlighting",
+  "secretWarnings",
+  "pathIcons",
+  "tools",
+] as const satisfies readonly (keyof CodePreviewSettings)[];
+
 export const defaultCodePreviewSettings: CodePreviewSettings = {
   shikiTheme: envTheme("CODE_PREVIEW_THEME", "dark-plus"),
   diffIntensity: envDiffIntensity("CODE_PREVIEW_DIFF_INTENSITY", "subtle"),

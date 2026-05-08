@@ -22,10 +22,6 @@ export function registerGrep(pi: ExtensionAPI, cwd: string) {
   pi.registerTool({
     ...originalGrep,
 
-    async execute(toolCallId, params, signal, onUpdate, ctx) {
-      return originalGrep.execute(toolCallId, params, signal, onUpdate, ctx);
-    },
-
     renderCall(args, theme) {
       const pattern = typeof args.pattern === "string" ? args.pattern : "";
       const path = typeof args.path === "string" && args.path ? args.path : ".";

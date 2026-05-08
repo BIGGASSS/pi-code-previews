@@ -1,0 +1,159 @@
+import assert from "node:assert/strict";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { initTheme } from "@mariozechner/pi-coding-agent";
+import type { Component } from "@mariozechner/pi-tui";
+import { afterEach, test } from "vitest";
+import codePreviews from "../index.ts";
+import {
+  codePreviewSettings,
+  defaultCodePreviewSettings,
+  setCodePreviewSettings,
+} from "../src/settings.ts";
+import { renderComponent, stripAnsi, testTheme } from "./test-utils.ts";
+
+const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
+const originalHome = process.env.HOME;
+const originalSettings = { ...codePreviewSettings, tools: [...codePreviewSettings.tools] };
+
+afterEach(() => {
+  if (originalPiCodingAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+  else process.env.PI_CODING_AGENT_DIR = originalPiCodingAgentDir;
+  if (originalHome === undefined) delete process.env.HOME;
+  else process.env.HOME = originalHome;
+  setCodePreviewSettings(originalSettings);
+});
+
+test("extension entrypoint registers commands and session renderer wiring", async () => {
+  const root = await mkdtemp(join(tmpdir(), "pi-code-previews-index-"));
+  process.env.PI_CODING_AGENT_DIR = root;
+  process.env.HOME = join(root, "home");
+  await writeFile(
+    join(root, "code-previews.json"),
+    JSON.stringify({ ...defaultCodePreviewSettings, syntaxHighlighting: false, tools: ["grep"] }),
+    "utf8",
+  );
+
+  const commands = new Map<string, { handler: (args: string, ctx: unknown) => Promise<void> }>();
+  const handlers = new Map<string, (event: unknown, ctx: { cwd: string }) => void>();
+  const registeredTools: string[] = [];
+  let activeTools = ["read", "bash"];
+  await codePreviews({
+    registerCommand: (
+      name: string,
+      command: { handler: (args: string, ctx: unknown) => Promise<void> },
+    ) => {
+      commands.set(name, command);
+    },
+    on: (event: string, handler: (event: unknown, ctx: { cwd: string }) => void) => {
+      handlers.set(event, handler);
+    },
+    registerTool: (tool: { name: string }) => {
+      registeredTools.push(tool.name);
+    },
+    getActiveTools: () => activeTools,
+    setActiveTools: (tools: string[]) => {
+      activeTools = tools;
+    },
+  } as never);
+
+  assert.ok(commands.has("code-preview-health"));
+  assert.ok(commands.has("code-preview-settings"));
+  handlers.get("session_start")?.({ type: "session_start", reason: "startup" }, { cwd: root });
+  assert.deepEqual(registeredTools, ["grep"]);
+  assert.deepEqual(activeTools, ["read", "bash", "grep"]);
+});
+
+test("health command renders current settings", async () => {
+  const root = await mkdtemp(join(tmpdir(), "pi-code-previews-health-"));
+  process.env.PI_CODING_AGENT_DIR = root;
+  process.env.HOME = join(root, "home");
+  setCodePreviewSettings({ ...defaultCodePreviewSettings, syntaxHighlighting: false });
+
+  const commands = await loadCommandsOnly();
+  let rendered = "";
+  await commands.get("code-preview-health")?.handler("", {
+    ui: {
+      custom: async (factory: CustomFactory) => {
+        const component = factory(undefined, testTheme(), undefined, () => undefined);
+        rendered = stripAnsi(renderComponent(component));
+      },
+    },
+  });
+
+  assert.match(rendered, /Code preview health/);
+  assert.match(rendered, /Syntax highlighting: off/);
+  assert.match(rendered, /Settings file:/);
+});
+
+test("settings command updates, saves, and notifies", async () => {
+  const root = await mkdtemp(join(tmpdir(), "pi-code-previews-settings-command-"));
+  process.env.PI_CODING_AGENT_DIR = root;
+  process.env.HOME = join(root, "home");
+  await mkdir(root, { recursive: true });
+  initTheme();
+  setCodePreviewSettings({ ...defaultCodePreviewSettings, syntaxHighlighting: false });
+
+  const commands = await loadCommandsOnly();
+  const notifications: string[] = [];
+  await commands.get("code-preview-settings")?.handler("", {
+    ui: {
+      notify: (message: string) => notifications.push(message),
+      custom: async (factory: CustomFactory) =>
+        new Promise<void>((resolve) => {
+          const list = factory(undefined, testTheme(), undefined, () => resolve());
+          (list as unknown as SettingsListInternals).onChange("readCollapsedLines", "20");
+          (list as unknown as SettingsListInternals).onCancel();
+        }),
+    },
+  });
+
+  const saved = JSON.parse(await readFile(join(root, "code-previews.json"), "utf8"));
+  assert.equal(saved.readCollapsedLines, 20);
+  assert.equal(notifications.length, 0);
+
+  await commands.get("code-preview-settings")?.handler("", {
+    ui: {
+      notify: (message: string) => notifications.push(message),
+      custom: async (factory: CustomFactory) =>
+        new Promise<void>((resolve) => {
+          const list = factory(undefined, testTheme(), undefined, () => resolve());
+          (list as unknown as SettingsListInternals).onChange("resetToDefaults", "reset now");
+          (list as unknown as SettingsListInternals).onCancel();
+        }),
+    },
+  });
+  assert.ok(notifications.some((message) => message.includes("reset to defaults")));
+});
+
+type CustomFactory = (
+  tui: unknown,
+  theme: ReturnType<typeof testTheme>,
+  keybindings: unknown,
+  done: (value?: undefined) => void,
+) => Component;
+
+interface SettingsListInternals {
+  onChange(id: string, value: string): void;
+  onCancel(): void;
+}
+
+async function loadCommandsOnly(): Promise<
+  Map<string, { handler: (args: string, ctx: { ui: unknown }) => Promise<void> }>
+> {
+  const commands = new Map<
+    string,
+    { handler: (args: string, ctx: { ui: unknown }) => Promise<void> }
+  >();
+  await codePreviews({
+    registerCommand: (
+      name: string,
+      command: { handler: (args: string, ctx: { ui: unknown }) => Promise<void> },
+    ) => {
+      commands.set(name, command);
+    },
+    on: () => undefined,
+  } as never);
+  return commands;
+}

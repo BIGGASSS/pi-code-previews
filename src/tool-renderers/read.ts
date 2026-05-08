@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ReadToolOptions } from "@mariozechner/pi-coding-agent";
 import { createReadToolDefinition, getLanguageFromPath } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { getPathArg, getReadStartLine, getTextContent, isTruncated } from "../data.ts";
@@ -10,15 +10,11 @@ import { normalizeShikiLanguage, shouldSkipHighlight } from "../shiki.ts";
 import { escapeControlChars } from "../terminal-text.ts";
 import { renderHighlightedPreviewText, withSecretWarning } from "./common.ts";
 
-export function registerRead(pi: ExtensionAPI, cwd: string) {
-  const originalRead = createReadToolDefinition(cwd);
+export function registerRead(pi: ExtensionAPI, cwd: string, options?: ReadToolOptions) {
+  const originalRead = createReadToolDefinition(cwd, options);
 
   pi.registerTool({
     ...originalRead,
-
-    async execute(toolCallId, params, signal, onUpdate, ctx) {
-      return originalRead.execute(toolCallId, params, signal, onUpdate, ctx);
-    },
 
     renderCall(args, theme, _context) {
       const path = getPathArg(args);

@@ -2,7 +2,12 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { getAgentDir } from "@mariozechner/pi-coding-agent";
-import { codePreviewSettings, normalizeSettings, type CodePreviewSettings } from "./settings.ts";
+import {
+  CODE_PREVIEW_SETTING_KEYS,
+  codePreviewSettings,
+  normalizeSettings,
+  type CodePreviewSettings,
+} from "./settings.ts";
 
 export function getSettingsPath(): string {
   return join(getAgentDir(), "code-previews.json");
@@ -63,27 +68,7 @@ export function extractCodePreviewSettings(data: unknown): Record<string, unknow
 }
 
 function hasDirectCodePreviewSettings(object: Record<string, unknown>): boolean {
-  return [
-    "shikiTheme",
-    "diffIntensity",
-    "wordEmphasis",
-    "readCollapsedLines",
-    "readContentPreview",
-    "writeCollapsedLines",
-    "editCollapsedLines",
-    "grepCollapsedLines",
-    "grepResultPreview",
-    "findResultPreview",
-    "lsResultPreview",
-    "pathListCollapsedLines",
-    "readLineNumbers",
-    "bashResultPreview",
-    "bashWarnings",
-    "syntaxHighlighting",
-    "secretWarnings",
-    "pathIcons",
-    "tools",
-  ].some((key) => key in object);
+  return CODE_PREVIEW_SETTING_KEYS.some((key) => key in object);
 }
 
 function isFileNotFound(error: unknown): boolean {

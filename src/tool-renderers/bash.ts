@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { BashToolOptions, ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { createBashToolDefinition } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { getBashWarnings } from "../bash-warnings.ts";
@@ -16,15 +16,11 @@ import { renderHighlightedText } from "../shiki.ts";
 import { escapeControlChars } from "../terminal-text.ts";
 import { withSecretWarning } from "./common.ts";
 
-export function registerBash(pi: ExtensionAPI, cwd: string) {
-  const originalBash = createBashToolDefinition(cwd);
+export function registerBash(pi: ExtensionAPI, cwd: string, options?: BashToolOptions) {
+  const originalBash = createBashToolDefinition(cwd, options);
 
   pi.registerTool({
     ...originalBash,
-
-    async execute(toolCallId, params, signal, onUpdate, ctx) {
-      return originalBash.execute(toolCallId, params, signal, onUpdate, ctx);
-    },
 
     renderCall(args, theme, context) {
       const command = typeof args.command === "string" ? args.command : "";

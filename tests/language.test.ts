@@ -6,6 +6,10 @@ test("resolvePreviewLanguage handles filenames, shebangs, and conservative conte
   assert.equal(resolvePreviewLanguage({ path: ".env.local" }), "dotenv");
   assert.equal(resolvePreviewLanguage({ path: "Dockerfile.dev" }), "dockerfile");
   assert.equal(resolvePreviewLanguage({ path: "Makefile" }), "makefile");
+  assert.equal(resolvePreviewLanguage({ path: "src/index.ts" }), "typescript");
+  assert.equal(resolvePreviewLanguage({ path: "src/App.tsx" }), "tsx");
+  assert.equal(resolvePreviewLanguage({ path: "src/index.js" }), "javascript");
+  assert.equal(resolvePreviewLanguage({ path: "src/App.jsx" }), "jsx");
   assert.equal(
     resolvePreviewLanguage({ path: "script", content: "#!/usr/bin/env python3\nprint('hi')" }),
     "python",

@@ -28,10 +28,6 @@ export function registerEdit(pi: ExtensionAPI, cwd: string) {
     // wraps our highlighted diff in the standard colored tool background.
     renderShell: "default",
 
-    async execute(toolCallId, params, signal, onUpdate, ctx) {
-      return originalEdit.execute(toolCallId, params, signal, onUpdate, ctx);
-    },
-
     renderCall(args, theme, context) {
       const path = getPathArg(args);
       const operations = getEditPreviewOperations(args);

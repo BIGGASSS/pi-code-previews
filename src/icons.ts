@@ -1,6 +1,5 @@
 import { basename, extname } from "node:path";
-
-export type PathIconMode = "off" | "unicode" | "nerd";
+import type { PathIconMode } from "./settings.ts";
 
 const NERD_FILE = "\uf15b";
 const NERD_DIR = "\ue5ff";

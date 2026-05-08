@@ -51,7 +51,7 @@ export function createSettingsItems(current: CodePreviewSettings): SettingItem[]
       label: "Preview tools",
       description:
         "Open granular tool preview toggles. Changes take effect after /reload. Tools already owned by another extension are skipped automatically.",
-      currentValue: current.tools.join(", "),
+      currentValue: formatToolsSettingValue(current.tools),
       submenu: (currentValue, done) => new ToolPreviewSettingsSubmenu(currentValue, done),
     },
     {
@@ -217,8 +217,14 @@ class ToolPreviewSettingsSubmenu extends Container {
   }
 
   private formatSelectedTools(): string {
-    return ALL_CODE_PREVIEW_TOOLS.filter((tool) => this.selectedTools.has(tool)).join(",");
+    return formatToolsSettingValue(
+      ALL_CODE_PREVIEW_TOOLS.filter((tool) => this.selectedTools.has(tool)),
+    );
   }
+}
+
+export function formatToolsSettingValue(tools: readonly CodePreviewToolName[]): string {
+  return tools.length ? tools.join(", ") : "none";
 }
 
 function createToolToggleItems(
