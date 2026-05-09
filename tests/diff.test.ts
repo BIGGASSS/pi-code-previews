@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { Box, visibleWidth } from "@mariozechner/pi-tui";
 import { afterEach, beforeEach, test } from "vitest";
 import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
-import { renderComponent, testTheme } from "./test-utils.ts";
+import { renderComponent, stripAnsi, testTheme } from "./test-utils.ts";
 import {
   createProgressiveSyntaxHighlightedDiffText,
   FullWidthDiffText,
@@ -52,6 +52,23 @@ test("diff renderers honor limits at remove/add boundaries", () => {
   const diff = "-1 old\n+1 new";
   assert.equal(renderSyntaxHighlightedDiff(diff, undefined, testTheme(), 1).split("\n").length, 1);
   assert.equal(renderPlainDiff(diff, testTheme(), 1).split("\n").length, 1);
+});
+
+test("diff gutters pad line numbers to keep separators aligned", () => {
+  const diffText = renderPlainDiff(
+    " 6 context\n+7 added\n+10 later\n-99 removed\n+100 added",
+    testTheme(),
+    5,
+  );
+  const rendered = stripAnsi(renderComponent(new FullWidthDiffText(diffText, testTheme()), 80));
+  const lines = rendered.split("\n").map((line) => line.trimEnd());
+  const pipeColumns = lines.map((line) => line.indexOf("│"));
+  assert.deepEqual([...new Set(pipeColumns)], [5]);
+  assert.equal(lines[0], "   6 │ context");
+  assert.equal(lines[1], "+  7 │ added");
+  assert.equal(lines[2], "+ 10 │ later");
+  assert.equal(lines[3], "- 99 │ removed");
+  assert.equal(lines[4], "+100 │ added");
 });
 
 test("full-width diff component wraps long ANSI lines", () => {

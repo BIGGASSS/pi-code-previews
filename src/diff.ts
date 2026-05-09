@@ -240,12 +240,14 @@ type DiffRenderOptions = {
 
 function renderDiff(diff: string, options: DiffRenderOptions): string {
   const lines = splitLinesLimited(diff, options.limit);
+  const parsedLines = lines.map(parseDiffLine);
+  const lineNumberWidth = diffLineNumberWidth(parsedLines);
   const out: string[] = [];
   const lang = options.syntaxHighlight ? options.lang : undefined;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
-    const parsed = parseDiffLine(line);
+    const parsed = parsedLines[i];
     if (!parsed) {
       out.push(renderSeparator(line, options.theme));
       continue;
@@ -255,17 +257,21 @@ function renderDiff(diff: string, options: DiffRenderOptions): string {
       const block: ParsedDiffLine[] = [];
       let end = i;
       while (end < lines.length) {
-        const next = parseDiffLine(lines[end]!);
+        const next = parsedLines[end];
         if (!next || !isChangedDiffLine(next)) break;
         block.push(next);
         end++;
       }
-      out.push(...renderChangeBlock(block, lang, options.theme, options.invalidate));
+      out.push(
+        ...renderChangeBlock(block, lang, options.theme, lineNumberWidth, options.invalidate),
+      );
       i = end - 1;
       continue;
     }
 
-    out.push(renderDiffParsedLine(parsed, lang, options.theme, options.invalidate));
+    out.push(
+      renderDiffParsedLine(parsed, lang, options.theme, lineNumberWidth, options.invalidate),
+    );
   }
 
   return out.join("\n");
@@ -286,6 +292,7 @@ function renderDiffParsedLine(
   parsed: ParsedDiffLine,
   lang: string | undefined,
   theme: Theme,
+  lineNumberWidth: number,
   invalidate?: () => void,
 ): string {
   const highlighted = highlightSingleLine(
@@ -294,12 +301,13 @@ function renderDiffParsedLine(
     theme,
     invalidate,
   );
+  const lineNumber = formatDiffLineNumber(parsed.lineNumber, lineNumberWidth);
   if (parsed.kind === "+")
-    return `${DIFF_ADD_MARKER}${theme.fg("toolDiffAdded", `+${parsed.lineNumber} │ `)}${highlighted}`;
+    return `${DIFF_ADD_MARKER}${theme.fg("toolDiffAdded", `+${lineNumber} │ `)}${highlighted}`;
   if (parsed.kind === "-")
-    return `${DIFF_REMOVE_MARKER}${theme.fg("toolDiffRemoved", `-${parsed.lineNumber} │ `)}${highlighted}`;
+    return `${DIFF_REMOVE_MARKER}${theme.fg("toolDiffRemoved", `-${lineNumber} │ `)}${highlighted}`;
   return dimAnsi(
-    `${theme.fg("toolDiffContext", ` ${parsed.lineNumber} │ `)}${highlighted || theme.fg("toolDiffContext", "")}`,
+    `${theme.fg("toolDiffContext", ` ${lineNumber} │ `)}${highlighted || theme.fg("toolDiffContext", "")}`,
   );
 }
 
@@ -307,6 +315,7 @@ function renderChangeBlock(
   block: ParsedDiffLine[],
   lang: string | undefined,
   theme: Theme,
+  lineNumberWidth: number,
   invalidate?: () => void,
 ): string[] {
   const removed = block.flatMap((line, index) =>
@@ -335,7 +344,7 @@ function renderChangeBlock(
   }
 
   return block.map((line, index) => {
-    const rendered = renderDiffParsedLine(line, lang, theme, invalidate);
+    const rendered = renderDiffParsedLine(line, lang, theme, lineNumberWidth, invalidate);
     const match = emphasis.get(index);
     return match ? emphasizeChangedSpans(rendered, match.ranges, match.kind) : rendered;
   });
@@ -683,6 +692,18 @@ function injectVisibleRangeEmphasis(
 }
 
 type ParsedDiffLine = { kind: "+" | "-" | " "; lineNumber: string; content: string };
+
+function diffLineNumberWidth(lines: Array<ParsedDiffLine | null>): number {
+  return lines.reduce((width, line) => Math.max(width, normalizedDiffLineNumber(line).length), 0);
+}
+
+function formatDiffLineNumber(lineNumber: string, width: number): string {
+  return lineNumber.trim().padStart(width, " ");
+}
+
+function normalizedDiffLineNumber(line: ParsedDiffLine | null): string {
+  return line?.lineNumber.trim() ?? "";
+}
 
 type AddedDiffLine = ParsedDiffLine & { kind: "+" };
 type RemovedDiffLine = ParsedDiffLine & { kind: "-" };
