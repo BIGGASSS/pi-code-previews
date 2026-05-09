@@ -54,6 +54,16 @@ Check status with:
 
 The health panel shows configured tools, active previews, disabled tools, and previews skipped because another extension owns that tool. Individual tool toggles are available in the Preview tools submenu in `/code-preview-settings` and take effect after `/reload`.
 
+## Benchmarks
+
+Diff/edit rendering benchmarks are available for local performance checks:
+
+```bash
+npm run bench:recommended
+```
+
+Individual suites cover diff wrapping, edit renderer previews, write/edit diff generation, and word-emphasis/pathological changed-line pairing.
+
 ## Configuration
 
 Settings are stored globally in Pi's agent config directory:

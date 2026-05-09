@@ -34,6 +34,11 @@
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "bench:diff": "tsx bench/diff-rendering.ts",
+    "bench:diff-wrap": "tsx bench/diff-wrap.ts",
+    "bench:edit-rendering": "tsx bench/edit-rendering.ts",
+    "bench:write-diff": "tsx bench/write-diff.ts",
+    "bench:word-pathology": "tsx bench/word-pathology.ts",
+    "bench:recommended": "npm run bench:diff-wrap && npm run bench:edit-rendering && npm run bench:write-diff && npm run bench:word-pathology",
     "test": "vitest run",
     "prepublishOnly": "npm run check && npm test",
     "pack:dry": "npm pack --dry-run"
