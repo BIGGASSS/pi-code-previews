@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { getSecretWarnings } from "../src/secret-warnings.ts";
+import { getSecretWarnings } from "../src/secret-warnings";
 
 test("getSecretWarnings detects common secret-looking values", () => {
   assert.deepEqual(getSecretWarnings("OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz"), ["API key"]);

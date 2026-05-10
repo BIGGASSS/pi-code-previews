@@ -1,5 +1,5 @@
-import { summarizeDiff } from "../src/diff.ts";
-import { createSimpleDiff, createStructuredDiff } from "../src/write-diff.ts";
+import { summarizeDiff } from "../src/diff";
+import { createSimpleDiff, createStructuredDiff } from "../src/write-diff";
 import {
   formatDuration,
   isEnabled,
@@ -8,7 +8,7 @@ import {
   printResults,
   runBench,
   timeOnce,
-} from "./helpers.ts";
+} from "./helpers";
 
 let sink = 0;
 

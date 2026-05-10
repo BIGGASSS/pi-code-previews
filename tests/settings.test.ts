@@ -4,7 +4,7 @@ import {
   createSettingsCategoryItems,
   createSettingsItems,
   isSettingsGroupItemId,
-} from "../src/settings-ui.ts";
+} from "../src/settings-ui";
 import {
   CODE_PREVIEW_SETTING_KEYS,
   codePreviewSettings,
@@ -12,7 +12,7 @@ import {
   normalizeSettings,
   setCodePreviewSettings,
   updateSetting,
-} from "../src/settings.ts";
+} from "../src/settings";
 
 test("settings normalization and reset preserve defaults", () => {
   const normalized = normalizeSettings({

@@ -3,13 +3,13 @@ import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, test } from "vitest";
-import { defaultCodePreviewSettings } from "../src/settings.ts";
+import { defaultCodePreviewSettings } from "../src/settings";
 import {
   extractCodePreviewSettings,
   getSettingsPath,
   loadSettingsFromDisk,
   saveSettingsToDisk,
-} from "../src/settings-store.ts";
+} from "../src/settings-store";
 
 const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalHome = process.env.HOME;

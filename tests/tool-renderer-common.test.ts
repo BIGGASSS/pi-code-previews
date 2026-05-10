@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
-import { type Component } from "@mariozechner/pi-tui";
+import { type Component } from "@earendil-works/pi-tui";
 import { afterEach, beforeEach, test, vi } from "vitest";
-import { createCodePreviewToolShell, previewCacheKey } from "../src/tool-renderers/common.ts";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
+import { createCodePreviewToolShell, previewCacheKey } from "../src/tool-renderers/common";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
 import {
   cloneCodePreviewSettingsForTest,
   renderComponent,
   stripAnsi,
   testTheme,
-} from "./test-utils.ts";
+} from "./test-utils";
 
 let previousCodePreviewSettings = cloneCodePreviewSettingsForTest();
 

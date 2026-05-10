@@ -1,11 +1,11 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 import { bundledThemesInfo, createHighlighter } from "shiki";
-import { positiveEnvInteger } from "./env.ts";
-import { hashString } from "./hash.ts";
-import { setCodePreviewSettings, codePreviewSettings } from "./settings.ts";
-import { escapeControlChars } from "./terminal-text.ts";
+import { positiveEnvInteger } from "./env";
+import { hashString } from "./hash";
+import { setCodePreviewSettings, codePreviewSettings } from "./settings";
+import { escapeControlChars } from "./terminal-text";
 
-export { escapeControlChars } from "./terminal-text.ts";
+export { escapeControlChars } from "./terminal-text";
 
 let shikiHighlighter: Awaited<ReturnType<typeof createHighlighter>> | undefined;
 let shikiInitVersion = 0;

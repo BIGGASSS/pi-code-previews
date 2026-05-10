@@ -3,7 +3,7 @@ import {
   SettingsManager,
   type BashToolOptions,
   type ReadToolOptions,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 
 export interface BuiltinToolOptions {
   bash?: BashToolOptions;

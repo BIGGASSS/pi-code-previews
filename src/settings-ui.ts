@@ -1,4 +1,4 @@
-import { getSelectListTheme, getSettingsListTheme } from "@mariozechner/pi-coding-agent";
+import { getSelectListTheme, getSettingsListTheme } from "@earendil-works/pi-coding-agent";
 import {
   Container,
   SelectList,
@@ -7,25 +7,25 @@ import {
   Text,
   type SelectItem,
   type SettingItem,
-} from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-tui";
 import { bundledThemes } from "shiki";
-import { getSettingsPath } from "./settings-store.ts";
+import { getSettingsPath } from "./settings-store";
 import {
   formatSettingValue,
   formatToolsSettingValue,
   type CodePreviewEditableSettingId,
   type CodePreviewSettings,
-} from "./settings.ts";
+} from "./settings";
 import {
   ALL_CODE_PREVIEW_TOOLS,
   parseCodePreviewTools,
   type CodePreviewToolName,
-} from "./tool-names.ts";
+} from "./tool-names";
 import {
   formatToolOwner,
   getCodePreviewToolStatuses,
   type CodePreviewToolStatus,
-} from "./tool-status.ts";
+} from "./tool-status";
 
 const SETTINGS_GROUP_ID_PREFIX = "group:";
 

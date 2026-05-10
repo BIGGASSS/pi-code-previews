@@ -1,4 +1,4 @@
-import { codePreviewSettings } from "./settings.ts";
+import { codePreviewSettings } from "./settings";
 
 export type WordChangeRanges = {
   removed: Array<[number, number]>;

@@ -1,18 +1,18 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { createGrepToolDefinition } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
-import { getTextContent } from "../data.ts";
-import { metadata, previewFooter, showingFooter, trimSingleTrailingNewline } from "../format.ts";
-import { renderGrepOutputLines } from "../grep-rendering.ts";
-import { renderDisplayPath } from "../paths.ts";
-import { codePreviewSettings } from "../settings.ts";
-import { shouldSkipHighlight } from "../shiki.ts";
-import { escapeControlChars } from "../terminal-text.ts";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { createGrepToolDefinition } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
+import { getTextContent } from "../data";
+import { metadata, previewFooter, showingFooter, trimSingleTrailingNewline } from "../format";
+import { renderGrepOutputLines } from "../grep-rendering";
+import { renderDisplayPath } from "../paths";
+import { codePreviewSettings } from "../settings";
+import { shouldSkipHighlight } from "../shiki";
+import { escapeControlChars } from "../terminal-text";
 import {
   createCodePreviewToolShell,
   renderHiddenPreviewExpandHint,
   renderSelectedOutputLines,
-} from "./common.ts";
+} from "./common";
 
 export function registerGrep(pi: ExtensionAPI, cwd: string) {
   const originalGrep = createGrepToolDefinition(cwd);

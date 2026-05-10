@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test } from "vitest";
-import { renderSyntaxHighlightedDiff } from "../src/diff.ts";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
-import { stripAnsi, testTheme } from "./test-utils.ts";
-import { wordEmphasisGoldenCases } from "./fixtures/word-emphasis-golden.ts";
+import { renderSyntaxHighlightedDiff } from "../src/diff";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
+import { stripAnsi, testTheme } from "./test-utils";
+import { wordEmphasisGoldenCases } from "./fixtures/word-emphasis-golden";
 
 const WORD_EMPHASIS_OPEN = /\x1b\[48;2;(?:64;132;82|148;62;70)m\x1b\[1m/g;
 const WORD_EMPHASIS_CLOSE = "\x1b[22m\x1b[49m";

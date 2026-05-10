@@ -2,12 +2,12 @@ import {
   codePreviewSettings,
   formatToolsSettingValue,
   getRequiredCodePreviewTools,
-} from "./settings.ts";
+} from "./settings";
 import {
   ALL_CODE_PREVIEW_TOOLS,
   parseCodePreviewTools,
   type CodePreviewToolName,
-} from "./tool-names.ts";
+} from "./tool-names";
 
 export function getEnabledCodePreviewTools(): Set<CodePreviewToolName> {
   const enabled =

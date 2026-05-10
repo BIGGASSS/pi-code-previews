@@ -1,5 +1,5 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import { truncateToWidth, visibleWidth, type Component } from "@mariozechner/pi-tui";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import { truncateToWidth, visibleWidth, type Component } from "@earendil-works/pi-tui";
 import {
   changedRangesForTokensWithConfidence,
   wordEmphasisSimilarityTokenValues,
@@ -8,11 +8,11 @@ import {
   type ConfidentWordChangeRanges,
   type WordChangeConfidence,
   type WordEmphasisToken,
-} from "./diff-word-emphasis.ts";
-import { positiveEnvInteger } from "./env.ts";
-import { codePreviewSettings } from "./settings.ts";
-import { renderWithShiki } from "./shiki.ts";
-import { escapeControlChars, visibleLength, wrapAnsiToWidth } from "./terminal-text.ts";
+} from "./diff-word-emphasis";
+import { positiveEnvInteger } from "./env";
+import { codePreviewSettings } from "./settings";
+import { renderWithShiki } from "./shiki";
+import { escapeControlChars, visibleLength, wrapAnsiToWidth } from "./terminal-text";
 
 const DIFF_ADD_MARKER = "\u0000PI_DIFF_ADD\u0000";
 const DIFF_REMOVE_MARKER = "\u0000PI_DIFF_REMOVE\u0000";

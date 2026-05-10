@@ -2,16 +2,16 @@ import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { initTheme } from "@mariozechner/pi-coding-agent";
-import type { Component } from "@mariozechner/pi-tui";
+import { initTheme } from "@earendil-works/pi-coding-agent";
+import type { Component } from "@earendil-works/pi-tui";
 import { afterEach, test } from "vitest";
-import codePreviews from "../index.ts";
+import codePreviews from "../index";
 import {
   codePreviewSettings,
   defaultCodePreviewSettings,
   setCodePreviewSettings,
-} from "../src/settings.ts";
-import { renderComponent, stripAnsi, testTheme } from "./test-utils.ts";
+} from "../src/settings";
+import { renderComponent, stripAnsi, testTheme } from "./test-utils";
 
 const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalHome = process.env.HOME;

@@ -1,8 +1,8 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import { pathIcon } from "./icons.ts";
-import { codePreviewSettings } from "./settings.ts";
-import { renderDisplayPath } from "./paths.ts";
-import { escapeControlChars } from "./terminal-text.ts";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import { pathIcon } from "./icons";
+import { codePreviewSettings } from "./settings";
+import { renderDisplayPath } from "./paths";
+import { escapeControlChars } from "./terminal-text";
 
 export function renderPathListLines(output: string, cwd: string, theme: Theme): string[] {
   const lines = output.split("\n");

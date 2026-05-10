@@ -9,7 +9,7 @@ import {
   getWriteDiffSkipReason,
   readExistingFileForPreview,
   resolvePreviewPath,
-} from "../src/write-diff.ts";
+} from "../src/write-diff";
 
 test("createSimpleDiff keeps separated changes distinct", () => {
   const diff = createSimpleDiff("a\nold one\nkeep\nold two\nz", "a\nnew one\nkeep\nnew two\nz");

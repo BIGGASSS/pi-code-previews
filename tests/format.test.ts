@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { trimSingleTrailingNewline } from "../src/format.ts";
+import { trimSingleTrailingNewline } from "../src/format";
 
 test("trimSingleTrailingNewline preserves leading and meaningful trailing spaces", () => {
   assert.equal(trimSingleTrailingNewline("  indented\n"), "  indented");

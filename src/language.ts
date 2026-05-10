@@ -1,6 +1,6 @@
 import { basename, extname } from "node:path";
 import { bundledLanguages } from "shiki";
-import { positiveEnvInteger } from "./env.ts";
+import { positiveEnvInteger } from "./env";
 
 const EXACT_BASENAMES = new Map<string, string>([
   ["dockerfile", "dockerfile"],

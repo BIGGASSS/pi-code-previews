@@ -1,15 +1,15 @@
-import type { ExtensionAPI, ToolInfo } from "@mariozechner/pi-coding-agent";
-import { getBuiltinToolOptions, type BuiltinToolOptions } from "./builtin-tool-options.ts";
-import { registerBash } from "./tool-renderers/bash.ts";
-import { registerEdit } from "./tool-renderers/edit.ts";
-import { registerFind } from "./tool-renderers/find.ts";
-import { registerGrep } from "./tool-renderers/grep.ts";
-import { registerLs } from "./tool-renderers/ls.ts";
-import { registerRead } from "./tool-renderers/read.ts";
-import { registerWrite } from "./tool-renderers/write.ts";
-import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-names.ts";
-import { getEnabledCodePreviewTools } from "./tool-selection.ts";
-import { resetCodePreviewToolStatuses, setCodePreviewToolStatus } from "./tool-status.ts";
+import type { ExtensionAPI, ToolInfo } from "@earendil-works/pi-coding-agent";
+import { getBuiltinToolOptions, type BuiltinToolOptions } from "./builtin-tool-options";
+import { registerBash } from "./tool-renderers/bash";
+import { registerEdit } from "./tool-renderers/edit";
+import { registerFind } from "./tool-renderers/find";
+import { registerGrep } from "./tool-renderers/grep";
+import { registerLs } from "./tool-renderers/ls";
+import { registerRead } from "./tool-renderers/read";
+import { registerWrite } from "./tool-renderers/write";
+import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-names";
+import { getEnabledCodePreviewTools } from "./tool-selection";
+import { resetCodePreviewToolStatuses, setCodePreviewToolStatus } from "./tool-status";
 
 export interface RegisterToolRenderersOptions {
   registeredTools?: Set<CodePreviewToolName>;

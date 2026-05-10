@@ -2,13 +2,13 @@ import type {
   AgentToolResult,
   Theme,
   ToolRenderResultOptions,
-} from "@mariozechner/pi-coding-agent";
-import { Text, type Component } from "@mariozechner/pi-tui";
-import { getTextContent } from "../data.ts";
-import { showingFooter, trimSingleTrailingNewline } from "../format.ts";
-import { renderPathListLines } from "../path-list-rendering.ts";
-import { escapeControlChars } from "../terminal-text.ts";
-import { renderHiddenPreviewExpandHint, renderSelectedOutputLines } from "./common.ts";
+} from "@earendil-works/pi-coding-agent";
+import { Text, type Component } from "@earendil-works/pi-tui";
+import { getTextContent } from "../data";
+import { showingFooter, trimSingleTrailingNewline } from "../format";
+import { renderPathListLines } from "../path-list-rendering";
+import { escapeControlChars } from "../terminal-text";
+import { renderHiddenPreviewExpandHint, renderSelectedOutputLines } from "./common";
 
 interface PathListResultConfig {
   cwd: string;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { getBashWarnings } from "../src/bash-warnings.ts";
+import { getBashWarnings } from "../src/bash-warnings";
 
 test("getBashWarnings returns user-facing labels", () => {
   assert.deepEqual(getBashWarnings("sudo rm -rf build"), [

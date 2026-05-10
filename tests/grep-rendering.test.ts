@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { parseGrepOutputLine } from "../src/grep-rendering.ts";
+import { parseGrepOutputLine } from "../src/grep-rendering";
 
 test("parseGrepOutputLine handles hyphenated filenames, context lines, and empty matches", () => {
   assert.deepEqual(parseGrepOutputLine("src/foo-1-bar.ts:42: const x = 1;"), {

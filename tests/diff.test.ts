@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { Box, visibleWidth } from "@mariozechner/pi-tui";
+import { Box, visibleWidth } from "@earendil-works/pi-tui";
 import { afterEach, beforeEach, test } from "vitest";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
-import { renderComponent, stripAnsi, testTheme } from "./test-utils.ts";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
+import { renderComponent, stripAnsi, testTheme } from "./test-utils";
 import {
   createProgressiveSyntaxHighlightedDiffText,
   FullWidthDiffText,
@@ -10,8 +10,8 @@ import {
   renderSyntaxHighlightedDiff,
   summarizeDiff,
   wordEmphasisTelemetry,
-} from "../src/diff.ts";
-import { changedRanges, changedRangesWithConfidence } from "../src/diff-word-emphasis.ts";
+} from "../src/diff";
+import { changedRanges, changedRangesWithConfidence } from "../src/diff-word-emphasis";
 
 let previousCodePreviewSettings = { ...codePreviewSettings };
 

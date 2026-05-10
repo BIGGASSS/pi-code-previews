@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
-import type { Component } from "@mariozechner/pi-tui";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
+import type { Component } from "@earendil-works/pi-tui";
 import { test, vi } from "vitest";
-import { withCodePreviewShell } from "../index.ts";
-import { renderComponent, stripAnsi, testTheme } from "./test-utils.ts";
+import { withCodePreviewShell } from "../index";
+import { renderComponent, stripAnsi, testTheme } from "./test-utils";
 
 test("withCodePreviewShell preserves execution and wraps existing renderers", async () => {
   const execute = vi.fn(async () => ({

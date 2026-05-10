@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { resolvePreviewLanguage } from "../src/language.ts";
+import { resolvePreviewLanguage } from "../src/language";
 
 test("resolvePreviewLanguage handles filenames, shebangs, and conservative content", () => {
   assert.equal(resolvePreviewLanguage({ path: ".env.local" }), "dotenv");

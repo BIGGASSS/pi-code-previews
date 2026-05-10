@@ -1,23 +1,23 @@
-import type { BashToolOptions, ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { createBashToolDefinition } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
-import { getBashWarnings } from "../bash-warnings.ts";
-import { getObjectValue, getTextContent, isTruncated } from "../data.ts";
+import type { BashToolOptions, ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { createBashToolDefinition } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
+import { getBashWarnings } from "../bash-warnings";
+import { getObjectValue, getTextContent, isTruncated } from "../data";
 import {
   countLabel,
   previewFooter,
   previewLines,
   showingFooter,
   trimSingleTrailingNewline,
-} from "../format.ts";
-import { codePreviewSettings } from "../settings.ts";
-import { renderHighlightedText } from "../shiki.ts";
-import { escapeControlChars } from "../terminal-text.ts";
+} from "../format";
+import { codePreviewSettings } from "../settings";
+import { renderHighlightedText } from "../shiki";
+import { escapeControlChars } from "../terminal-text";
 import {
   createCodePreviewToolShell,
   renderHiddenPreviewExpandHint,
   withSecretWarning,
-} from "./common.ts";
+} from "./common";
 
 export function registerBash(pi: ExtensionAPI, cwd: string, options?: BashToolOptions) {
   const originalBash = createBashToolDefinition(cwd, options);

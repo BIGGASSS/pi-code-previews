@@ -1,7 +1,7 @@
-import type { DiffWordEmphasis } from "../src/settings.ts";
-import { renderSyntaxHighlightedDiff, wordEmphasisTelemetry } from "../src/diff.ts";
-import { changedRanges, changedRangesWithConfidence } from "../src/diff-word-emphasis.ts";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
+import type { DiffWordEmphasis } from "../src/settings";
+import { renderSyntaxHighlightedDiff, wordEmphasisTelemetry } from "../src/diff";
+import { changedRanges, changedRangesWithConfidence } from "../src/diff-word-emphasis";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
 import {
   benchTheme,
   formatDuration,
@@ -10,7 +10,7 @@ import {
   printLayerSummary,
   printResults,
   runBench,
-} from "./helpers.ts";
+} from "./helpers";
 
 let sink = 0;
 const theme = benchTheme();

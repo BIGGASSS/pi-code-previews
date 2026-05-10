@@ -2,8 +2,8 @@ import { readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import { isAbsolute, resolve } from "node:path";
 import { diffLines } from "diff";
-import { positiveEnvInteger } from "./env.ts";
-import { formatBytes } from "./format.ts";
+import { positiveEnvInteger } from "./env";
+import { formatBytes } from "./format";
 
 export type StructuredDiffLine = {
   kind: "context" | "add" | "remove" | "separator";

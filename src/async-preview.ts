@@ -1,7 +1,7 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import { Text, type Component } from "@mariozechner/pi-tui";
-import { positiveEnvInteger } from "./env.ts";
-import { escapeControlChars } from "./terminal-text.ts";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import { Text, type Component } from "@earendil-works/pi-tui";
+import { positiveEnvInteger } from "./env";
+import { escapeControlChars } from "./terminal-text";
 
 const ASYNC_RENDER_CHAR_THRESHOLD = positiveEnvInteger("CODE_PREVIEW_ASYNC_RENDER_CHARS", 8000);
 

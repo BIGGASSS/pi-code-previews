@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test } from "vitest";
-import { renderPathListLines } from "../src/path-list-rendering.ts";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
-import { stripAnsi, testTheme } from "./test-utils.ts";
+import { renderPathListLines } from "../src/path-list-rendering";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
+import { stripAnsi, testTheme } from "./test-utils";
 
 let previousCodePreviewSettings = { ...codePreviewSettings };
 

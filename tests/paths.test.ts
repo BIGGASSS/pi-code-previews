@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { formatDisplayPath } from "../src/paths.ts";
+import { formatDisplayPath } from "../src/paths";
 
 test("formatDisplayPath shortens paths relative to cwd", () => {
   assert.equal(formatDisplayPath("/tmp/project/src/file.ts", "/tmp/project"), "src/file.ts");

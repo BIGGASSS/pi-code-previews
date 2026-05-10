@@ -1,30 +1,30 @@
-import type { ExtensionAPI, Theme } from "@mariozechner/pi-coding-agent";
-import { createEditToolDefinition, getLanguageFromPath } from "@mariozechner/pi-coding-agent";
-import { Container, Text, type Component } from "@mariozechner/pi-tui";
-import { AsyncPreview, shouldRenderAsync } from "../async-preview.ts";
-import { getEditDiff, getObjectValue, getPathArg, getTextContent } from "../data.ts";
+import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
+import { createEditToolDefinition, getLanguageFromPath } from "@earendil-works/pi-coding-agent";
+import { Container, Text, type Component } from "@earendil-works/pi-tui";
+import { AsyncPreview, shouldRenderAsync } from "../async-preview";
+import { getEditDiff, getObjectValue, getPathArg, getTextContent } from "../data";
 import {
   createProgressiveSyntaxHighlightedDiffText,
   FullWidthDiffText,
   renderPlainDiff,
   renderSyntaxHighlightedDiff,
   summarizeDiff,
-} from "../diff.ts";
-import { diffSummarySeparator, type DiffSummary } from "../diff-summary.ts";
-import { countLabel, previewFooter, showingFooter } from "../format.ts";
-import { resolvePreviewLanguage } from "../language.ts";
-import { renderDisplayPath } from "../paths.ts";
-import { codePreviewSettings } from "../settings.ts";
-import { shouldSkipHighlight } from "../shiki.ts";
-import { escapeControlChars } from "../terminal-text.ts";
-import { createSimpleDiff } from "../write-diff.ts";
+} from "../diff";
+import { diffSummarySeparator, type DiffSummary } from "../diff-summary";
+import { countLabel, previewFooter, showingFooter } from "../format";
+import { resolvePreviewLanguage } from "../language";
+import { renderDisplayPath } from "../paths";
+import { codePreviewSettings } from "../settings";
+import { shouldSkipHighlight } from "../shiki";
+import { escapeControlChars } from "../terminal-text";
+import { createSimpleDiff } from "../write-diff";
 import {
   cachedPreview,
   createCodePreviewToolShell,
   previewArgsKey,
   previewCacheKey,
   renderHiddenPreviewExpandHint,
-} from "./common.ts";
+} from "./common";
 
 export function registerEdit(pi: ExtensionAPI, cwd: string) {
   const originalEdit = createEditToolDefinition(cwd);

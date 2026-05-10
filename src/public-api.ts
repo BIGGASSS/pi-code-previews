@@ -1,9 +1,5 @@
-import { loadSettingsFromDisk } from "./settings-store.ts";
-import {
-  codePreviewSettings,
-  setCodePreviewSettings,
-  type CodePreviewSettings,
-} from "./settings.ts";
+import { loadSettingsFromDisk } from "./settings-store";
+import { codePreviewSettings, setCodePreviewSettings, type CodePreviewSettings } from "./settings";
 
 /**
  * Load pi-code-previews settings from disk into this module instance.

@@ -1,32 +1,37 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { getSettingsListTheme } from "@mariozechner/pi-coding-agent";
-import { SettingsList, truncateToWidth, visibleWidth, type Component } from "@mariozechner/pi-tui";
-import { registerToolRenderers } from "./src/renderers.ts";
-import { getSettingsPath, saveSettingsToDisk } from "./src/settings-store.ts";
-import { loadCodePreviewSettings as loadCodePreviewSettingsFromDisk } from "./src/public-api.ts";
-import { createSettingsCategoryItems, isSettingsGroupItemId } from "./src/settings-ui.ts";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { getSettingsListTheme } from "@earendil-works/pi-coding-agent";
+import {
+  SettingsList,
+  truncateToWidth,
+  visibleWidth,
+  type Component,
+} from "@earendil-works/pi-tui";
+import { registerToolRenderers } from "./src/renderers";
+import { getSettingsPath, saveSettingsToDisk } from "./src/settings-store";
+import { loadCodePreviewSettings as loadCodePreviewSettingsFromDisk } from "./src/public-api";
+import { createSettingsCategoryItems, isSettingsGroupItemId } from "./src/settings-ui";
 import {
   setCodePreviewSettings,
   codePreviewSettings,
   updateSetting,
   type CodePreviewSettings,
-} from "./src/settings.ts";
-import { getShikiStatus, initializeShiki } from "./src/shiki.ts";
+} from "./src/settings";
+import { getShikiStatus, initializeShiki } from "./src/shiki";
 import {
   formatActiveCodePreviewTools,
   formatDisabledCodePreviewTools,
   formatPendingCodePreviewTools,
   formatSkippedCodePreviewToolLines,
-} from "./src/tool-status.ts";
-import { type CodePreviewToolName } from "./src/tool-names.ts";
-import { formatEnabledCodePreviewTools } from "./src/tool-selection.ts";
+} from "./src/tool-status";
+import { type CodePreviewToolName } from "./src/tool-names";
+import { formatEnabledCodePreviewTools } from "./src/tool-selection";
 
 /**
  * Syntax-highlighted code previews for pi.
  */
-export { withCodePreviewShell, type CodePreviewShellOptions } from "./src/cooperative-tools.ts";
-export { loadCodePreviewSettings } from "./src/public-api.ts";
-export type { CodePreviewSettings, ToolCallBackgroundMode } from "./src/settings.ts";
+export { withCodePreviewShell, type CodePreviewShellOptions } from "./src/cooperative-tools";
+export { loadCodePreviewSettings } from "./src/public-api";
+export type { CodePreviewSettings, ToolCallBackgroundMode } from "./src/settings";
 
 export default async function codePreviews(pi: ExtensionAPI) {
   await loadCodePreviewSettingsFromDisk();

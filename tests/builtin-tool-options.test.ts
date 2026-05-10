@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, test } from "vitest";
-import { getBuiltinToolOptions } from "../src/builtin-tool-options.ts";
+import { getBuiltinToolOptions } from "../src/builtin-tool-options";
 
 const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
 

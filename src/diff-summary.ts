@@ -1,6 +1,6 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import type { summarizeDiff } from "./diff.ts";
-import { countLabel } from "./format.ts";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import type { summarizeDiff } from "./diff";
+import { countLabel } from "./format";
 
 export type DiffSummary = ReturnType<typeof summarizeDiff>;
 

@@ -3,12 +3,12 @@ import type {
   Theme,
   ToolDefinition,
   ToolRenderResultOptions,
-} from "@mariozechner/pi-coding-agent";
-import { Container, Text, type Component } from "@mariozechner/pi-tui";
-import { getTextContent } from "./data.ts";
-import { codePreviewSettings, type ToolCallBackgroundMode } from "./settings.ts";
-import { escapeControlChars } from "./terminal-text.ts";
-import { createCodePreviewToolShell } from "./tool-renderers/common.ts";
+} from "@earendil-works/pi-coding-agent";
+import { Container, Text, type Component } from "@earendil-works/pi-tui";
+import { getTextContent } from "./data";
+import { codePreviewSettings, type ToolCallBackgroundMode } from "./settings";
+import { escapeControlChars } from "./terminal-text";
+import { createCodePreviewToolShell } from "./tool-renderers/common";
 
 export interface CodePreviewShellOptions {
   /**

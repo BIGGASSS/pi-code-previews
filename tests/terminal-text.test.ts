@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { visibleWidth } from "@mariozechner/pi-tui";
+import { visibleWidth } from "@earendil-works/pi-tui";
 import { test } from "vitest";
-import { wrapAnsiToWidth } from "../src/terminal-text.ts";
-import { stripAnsi } from "./test-utils.ts";
+import { wrapAnsiToWidth } from "../src/terminal-text";
+import { stripAnsi } from "./test-utils";
 
 test("ANSI wrapping uses terminal cell width for wide unicode", () => {
   const rows = wrapAnsiToWidth(`\x1b[31m${"漢".repeat(8)}\x1b[39m`, 6, 10);

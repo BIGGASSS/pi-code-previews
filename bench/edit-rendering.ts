@@ -1,5 +1,5 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import type { Component } from "@mariozechner/pi-tui";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import type { Component } from "@earendil-works/pi-tui";
 import {
   benchTheme,
   printBenchHeader,
@@ -7,14 +7,14 @@ import {
   printResults,
   renderComponent,
   runBench,
-} from "./helpers.ts";
+} from "./helpers";
 
 process.env.CODE_PREVIEW_TOOLS = "edit";
 process.env.CODE_PREVIEW_ASYNC_RENDER_CHARS ??= "100000000";
 
-const { codePreviewSettings, setCodePreviewSettings } = await import("../src/settings.ts");
-const { initializeShiki } = await import("../src/shiki.ts");
-const { registerToolRenderers } = await import("../src/renderers.ts");
+const { codePreviewSettings, setCodePreviewSettings } = await import("../src/settings");
+const { initializeShiki } = await import("../src/shiki");
+const { registerToolRenderers } = await import("../src/renderers");
 
 const WIDTH = 120;
 let sink = 0;

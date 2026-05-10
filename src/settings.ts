@@ -1,12 +1,12 @@
 import { bundledThemes } from "shiki";
-import { getObjectValue } from "./data.ts";
-import { parsePositiveInteger, positiveEnvInteger } from "./env.ts";
+import { getObjectValue } from "./data";
+import { parsePositiveInteger, positiveEnvInteger } from "./env";
 import {
   ALL_CODE_PREVIEW_TOOLS,
   isCodePreviewToolName,
   parseCodePreviewTools,
   type CodePreviewToolName,
-} from "./tool-names.ts";
+} from "./tool-names";
 
 export type DiffBackgroundIntensity = "off" | "subtle" | "medium";
 export type DiffWordEmphasis = "off" | "smart" | "all";

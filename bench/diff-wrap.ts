@@ -1,6 +1,6 @@
-import { FullWidthDiffText, renderSyntaxHighlightedDiff } from "../src/diff.ts";
-import { initializeShiki } from "../src/shiki.ts";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
+import { FullWidthDiffText, renderSyntaxHighlightedDiff } from "../src/diff";
+import { initializeShiki } from "../src/shiki";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
 import {
   benchTheme,
   numberedLines,
@@ -8,7 +8,7 @@ import {
   printLayerSummary,
   printResults,
   runBench,
-} from "./helpers.ts";
+} from "./helpers";
 
 const WIDTHS = [80, 140];
 let sink = 0;

@@ -1,11 +1,11 @@
 import { performance } from "node:perf_hooks";
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import type { DiffWordEmphasis } from "../src/settings.ts";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import type { DiffWordEmphasis } from "../src/settings";
 
-const { renderSyntaxHighlightedDiff } = await import("../src/diff.ts");
-const { changedRanges } = await import("../src/diff-word-emphasis.ts");
-const { initializeShiki } = await import("../src/shiki.ts");
-const { codePreviewSettings, setCodePreviewSettings } = await import("../src/settings.ts");
+const { renderSyntaxHighlightedDiff } = await import("../src/diff");
+const { changedRanges } = await import("../src/diff-word-emphasis");
+const { initializeShiki } = await import("../src/shiki");
+const { codePreviewSettings, setCodePreviewSettings } = await import("../src/settings");
 
 type BenchCase = {
   name: string;

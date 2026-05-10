@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test } from "vitest";
-import { codePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
-import { initializeShiki, renderWithShiki } from "../src/shiki.ts";
+import { codePreviewSettings, setCodePreviewSettings } from "../src/settings";
+import { initializeShiki, renderWithShiki } from "../src/shiki";
 
 let previousCodePreviewSettings = { ...codePreviewSettings };
 

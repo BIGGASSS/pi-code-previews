@@ -1,6 +1,6 @@
-import type { SourceInfo } from "@mariozechner/pi-coding-agent";
-import { formatToolsSettingValue } from "./settings.ts";
-import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-names.ts";
+import type { SourceInfo } from "@earendil-works/pi-coding-agent";
+import { formatToolsSettingValue } from "./settings";
+import { ALL_CODE_PREVIEW_TOOLS, type CodePreviewToolName } from "./tool-names";
 
 export type CodePreviewToolStatus =
   | { state: "pending" }

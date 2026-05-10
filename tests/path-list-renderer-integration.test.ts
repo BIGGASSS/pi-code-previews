@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { defaultCodePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
+import { defaultCodePreviewSettings, setCodePreviewSettings } from "../src/settings";
 import {
   cloneCodePreviewSettingsForTest,
   renderComponent,
   stripAnsi,
   testTheme,
-} from "./test-utils.ts";
+} from "./test-utils";
 import {
   findRenderer,
   preserveCodePreviewToolsEnv,
   registerRenderers,
-} from "./renderer-test-utils.ts";
+} from "./renderer-test-utils";
 
 preserveCodePreviewToolsEnv();
 

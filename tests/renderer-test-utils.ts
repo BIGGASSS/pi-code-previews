@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { type Component } from "@mariozechner/pi-tui";
+import { type Component } from "@earendil-works/pi-tui";
 import { afterEach, beforeEach } from "vitest";
-import { registerToolRenderers } from "../src/renderers.ts";
+import { registerToolRenderers } from "../src/renderers";
 
 export type RegisteredRenderer = {
   name: string;

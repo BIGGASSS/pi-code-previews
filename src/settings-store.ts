@@ -1,13 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import {
   CODE_PREVIEW_SETTING_KEYS,
   codePreviewSettings,
   normalizeSettings,
   type CodePreviewSettings,
-} from "./settings.ts";
+} from "./settings";
 
 export function getSettingsPath(): string {
   return join(getAgentDir(), "code-previews.json");

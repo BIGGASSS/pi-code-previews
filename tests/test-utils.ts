@@ -1,6 +1,6 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import type { Component } from "@mariozechner/pi-tui";
-import { codePreviewSettings, type CodePreviewSettings } from "../src/settings.ts";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import type { Component } from "@earendil-works/pi-tui";
+import { codePreviewSettings, type CodePreviewSettings } from "../src/settings";
 
 export function renderComponent(component: Component, width = 100): string {
   return component.render(width).join("\n");

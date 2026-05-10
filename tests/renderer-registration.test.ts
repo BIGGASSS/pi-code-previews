@@ -1,18 +1,18 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { registerToolRenderers } from "../src/renderers.ts";
-import { defaultCodePreviewSettings, setCodePreviewSettings } from "../src/settings.ts";
-import type { CodePreviewToolName } from "../src/tool-names.ts";
+import { registerToolRenderers } from "../src/renderers";
+import { defaultCodePreviewSettings, setCodePreviewSettings } from "../src/settings";
+import type { CodePreviewToolName } from "../src/tool-names";
 import {
   formatActiveCodePreviewTools,
   formatSkippedCodePreviewToolLines,
-} from "../src/tool-status.ts";
+} from "../src/tool-status";
 import {
   findRenderer,
   preserveCodePreviewToolsEnv,
   registerRenderers,
-} from "./renderer-test-utils.ts";
-import { renderComponent, stripAnsi, testTheme } from "./test-utils.ts";
+} from "./renderer-test-utils";
+import { renderComponent, stripAnsi, testTheme } from "./test-utils";
 
 preserveCodePreviewToolsEnv();
 

@@ -1,11 +1,11 @@
-import type { Theme } from "@mariozechner/pi-coding-agent";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 import {
   Container,
   Text,
   truncateToWidth,
   visibleWidth,
   type Component,
-} from "@mariozechner/pi-tui";
+} from "@earendil-works/pi-tui";
 import {
   countLabel,
   hiddenLinesMarker,
@@ -13,13 +13,13 @@ import {
   hiddenPreviewExpandLabel,
   selectPreviewLines,
   selectPreviewTextLines,
-} from "../format.ts";
-import { positiveEnvInteger } from "../env.ts";
-import { hashString } from "../hash.ts";
-import { getSecretWarnings } from "../secret-warnings.ts";
-import { codePreviewSettings, type ToolCallBackgroundMode } from "../settings.ts";
-import { renderHighlightedText } from "../shiki.ts";
-import { escapeControlChars } from "../terminal-text.ts";
+} from "../format";
+import { positiveEnvInteger } from "../env";
+import { hashString } from "../hash";
+import { getSecretWarnings } from "../secret-warnings";
+import { codePreviewSettings, type ToolCallBackgroundMode } from "../settings";
+import { renderHighlightedText } from "../shiki";
+import { escapeControlChars } from "../terminal-text";
 
 const SECRET_SCAN_CHARS = positiveEnvInteger("CODE_PREVIEW_SECRET_SCAN_CHARS", 200_000);
 

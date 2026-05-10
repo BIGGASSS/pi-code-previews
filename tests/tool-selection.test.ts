@@ -4,11 +4,8 @@ import {
   defaultCodePreviewSettings,
   setCodePreviewSettings,
   codePreviewSettings,
-} from "../src/settings.ts";
-import {
-  formatEnabledCodePreviewTools,
-  getEnabledCodePreviewTools,
-} from "../src/tool-selection.ts";
+} from "../src/settings";
+import { formatEnabledCodePreviewTools, getEnabledCodePreviewTools } from "../src/tool-selection";
 
 let previousCodePreviewSettings = { ...codePreviewSettings };
 let previousCodePreviewTools: string | undefined;

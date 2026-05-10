@@ -1,27 +1,27 @@
-import type { ExtensionAPI, Theme } from "@mariozechner/pi-coding-agent";
-import { createWriteToolDefinition, getLanguageFromPath } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
-import { AsyncPreview, shouldRenderAsync } from "../async-preview.ts";
-import { getObjectValue, getPathArg, getTextContent } from "../data.ts";
+import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
+import { createWriteToolDefinition, getLanguageFromPath } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
+import { AsyncPreview, shouldRenderAsync } from "../async-preview";
+import { getObjectValue, getPathArg, getTextContent } from "../data";
 import {
   createProgressiveSyntaxHighlightedDiffText,
   FullWidthDiffText,
   renderPlainDiff,
   summarizeDiff,
-} from "../diff.ts";
-import { describeDiffShape, diffSummarySeparator } from "../diff-summary.ts";
-import { countLabel, formatBytes, metadata, previewFooter, showingFooter } from "../format.ts";
-import { resolvePreviewLanguage } from "../language.ts";
-import { renderDisplayPath } from "../paths.ts";
-import { codePreviewSettings } from "../settings.ts";
-import { getShikiStatus, normalizeShikiLanguage, shouldSkipHighlight } from "../shiki.ts";
-import { escapeControlChars } from "../terminal-text.ts";
+} from "../diff";
+import { describeDiffShape, diffSummarySeparator } from "../diff-summary";
+import { countLabel, formatBytes, metadata, previewFooter, showingFooter } from "../format";
+import { resolvePreviewLanguage } from "../language";
+import { renderDisplayPath } from "../paths";
+import { codePreviewSettings } from "../settings";
+import { getShikiStatus, normalizeShikiLanguage, shouldSkipHighlight } from "../shiki";
+import { escapeControlChars } from "../terminal-text";
 import {
   createSimpleDiff,
   getWriteDiffSkipReason,
   readExistingFileForPreview,
   shouldSkipWriteDiffBytes,
-} from "../write-diff.ts";
+} from "../write-diff";
 import {
   cachedPreview,
   createCodePreviewToolShell,
@@ -30,7 +30,7 @@ import {
   previewCacheKey,
   renderHighlightedPreviewText,
   withSecretWarning,
-} from "./common.ts";
+} from "./common";
 
 export function registerWrite(pi: ExtensionAPI, cwd: string) {
   const originalWrite = createWriteToolDefinition(cwd);
