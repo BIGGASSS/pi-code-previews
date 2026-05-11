@@ -10,9 +10,11 @@ import { renderPathListLines } from "../../path-list/render";
 import { escapeControlChars } from "../../shared/terminal-text";
 import { renderSelectedOutputLines } from "./preview-text";
 import { renderHiddenPreviewPrelude, renderResultPrelude } from "./result-prelude";
+import type { PathIconMode } from "../../settings/types";
 
 interface PathListResultConfig {
   cwd: string;
+  iconMode: PathIconMode;
   previewEnabled: boolean;
   loadingLabel: string;
   errorLabel: string;
@@ -65,7 +67,7 @@ export function renderPathListResult(
   const rawLines = output.split("\n");
   const limit = expanded ? rawLines.length : config.collapsedLines;
   const preview = renderSelectedOutputLines(rawLines, limit, theme, (chunk) =>
-    renderPathListLines(chunk.join("\n"), config.cwd, theme),
+    renderPathListLines(chunk.join("\n"), config.cwd, theme, { iconMode: config.iconMode }),
   );
   let text = preview.lines.join("\n");
   if (preview.hidden > 0)

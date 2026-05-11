@@ -61,9 +61,7 @@ export function createCodePreviewToolShell(
   };
 }
 
-function codePreviewRenderShell(
-  mode: ToolCallBackgroundMode = codePreviewSettings.toolCallBackground,
-): "default" | "self" {
+function codePreviewRenderShell(mode: ToolCallBackgroundMode): "default" | "self" {
   return mode === "on" ? "default" : "self";
 }
 

@@ -1,20 +1,20 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { pathIcon } from "../paths/icons";
-import { codePreviewSettings, type PathIconMode } from "../settings/index";
 import { renderDisplayPath } from "../paths/display";
 import { escapeControlChars } from "../shared/terminal-text";
+import type { PathIconMode } from "../settings/types";
 
 export interface PathListRenderOptions {
-  iconMode?: PathIconMode;
+  iconMode: PathIconMode;
 }
 
 export function renderPathListLines(
   output: string,
   cwd: string,
   theme: Theme,
-  options: PathListRenderOptions = {},
+  options: PathListRenderOptions,
 ): string[] {
-  const iconMode = options.iconMode ?? codePreviewSettings.pathIcons;
+  const { iconMode } = options;
   const lines = output.split("\n");
   const pathLines = lines.filter((line) => line && !(line.startsWith("[") && line.endsWith("]")));
   const shouldTree = pathLines.some((line) => line.includes("/"));

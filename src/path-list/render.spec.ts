@@ -1,24 +1,14 @@
 import assert from "node:assert/strict";
-import { afterEach, beforeEach, test } from "vitest";
+import { test } from "vitest";
 import { renderPathListLines } from "./render";
-import { codePreviewSettings, setCodePreviewSettings } from "../settings/index";
 import { stripAnsi, testTheme } from "../testing/render";
-
-let previousCodePreviewSettings = { ...codePreviewSettings };
-
-beforeEach(() => {
-  previousCodePreviewSettings = { ...codePreviewSettings };
-});
-
-afterEach(() => {
-  setCodePreviewSettings(previousCodePreviewSettings);
-});
 
 test("renderPathListLines groups nested paths", () => {
   const lines = renderPathListLines(
     "src/renderers.ts\nsrc/diff.ts\ntests/helpers.test.ts",
     "/tmp/project",
     testTheme(),
+    { iconMode: "unicode" },
   );
   const plain = stripAnsi(lines.join("\n"));
   assert.match(plain, /▸ src\//);
@@ -27,19 +17,20 @@ test("renderPathListLines groups nested paths", () => {
 });
 
 test("path list rendering can disable icons or use Nerd Font icons", () => {
-  setCodePreviewSettings({ ...codePreviewSettings, pathIcons: "off" });
   assert.doesNotMatch(
-    stripAnsi(renderPathListLines("src/renderers.ts", "/tmp/project", testTheme()).join("\n")),
+    stripAnsi(
+      renderPathListLines("src/renderers.ts", "/tmp/project", testTheme(), {
+        iconMode: "off",
+      }).join("\n"),
+    ),
     /[▸•]/,
   );
 
-  setCodePreviewSettings({ ...codePreviewSettings, pathIcons: "nerd" });
-  assert.match(
-    stripAnsi(renderPathListLines("src/renderers.ts", "/tmp/project", testTheme()).join("\n")),
-    /\ue5ff src\//,
+  const nerd = stripAnsi(
+    renderPathListLines("src/renderers.ts", "/tmp/project", testTheme(), {
+      iconMode: "nerd",
+    }).join("\n"),
   );
-  assert.match(
-    stripAnsi(renderPathListLines("src/renderers.ts", "/tmp/project", testTheme()).join("\n")),
-    /\ue628 renderers\.ts/,
-  );
+  assert.match(nerd, /\ue5ff src\//);
+  assert.match(nerd, /\ue628 renderers\.ts/);
 });

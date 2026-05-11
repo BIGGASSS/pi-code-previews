@@ -6,8 +6,6 @@ import { codePreviewSettings } from "../settings/index";
 import { escapeControlChars } from "../shared/terminal-text";
 import { normalizePreviewLanguageAlias } from "./language";
 
-export { escapeControlChars } from "../shared/terminal-text";
-
 let shikiHighlighter: Awaited<ReturnType<typeof createHighlighter>> | undefined;
 let shikiInitVersion = 0;
 let shikiHighlighterGeneration = 0;

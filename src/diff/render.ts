@@ -4,7 +4,6 @@ import { renderWithShiki } from "../syntax/shiki";
 import { escapeControlChars } from "../shared/terminal-text";
 import { splitLinesLimited } from "../shared/text-lines";
 import { collectChangedDiffBlock } from "./changed-blocks";
-import { FullWidthDiffText } from "./full-width-text";
 import { changedLineEmphasis, emphasizeChangedSpans } from "./word/line-emphasis";
 import { DIFF_ADD_MARKER, DIFF_REMOVE_MARKER } from "./markers";
 import {
@@ -30,25 +29,6 @@ export function renderSyntaxHighlightedDiff(
     invalidate,
     codePreviewSettings.wordEmphasis !== "off",
   );
-}
-
-export function createProgressiveSyntaxHighlightedDiffText(
-  diff: string,
-  lang: string | undefined,
-  theme: Theme,
-  limit: number,
-  options: { decorate?: (body: string) => string; invalidate?: () => void } = {},
-): FullWidthDiffText {
-  const decorate = options.decorate ?? ((body: string) => body);
-  const initialBody = renderSyntaxHighlightedDiffWithWordEmphasis(
-    diff,
-    lang,
-    theme,
-    limit,
-    options.invalidate,
-    codePreviewSettings.wordEmphasis !== "off",
-  );
-  return new FullWidthDiffText(decorate(initialBody), theme);
 }
 
 function renderSyntaxHighlightedDiffWithWordEmphasis(

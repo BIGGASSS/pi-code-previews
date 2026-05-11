@@ -1,4 +1,4 @@
-import type { WordChangeRanges } from "./emphasis";
+import type { WordChangeRanges } from "./types";
 import {
   isIdentifierToken,
   isMeaningfulOperatorToken,

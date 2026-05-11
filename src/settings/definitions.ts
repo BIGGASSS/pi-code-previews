@@ -17,8 +17,6 @@ import {
 } from "./types";
 import { isToolCallBackgroundMode, parseToolCallBackgroundMode } from "./tool-call-background";
 
-export { isToolCallBackgroundMode } from "./tool-call-background";
-
 export type CodePreviewSettingDescriptor<K extends keyof CodePreviewSettings> = {
   normalize(value: unknown, fallback: CodePreviewSettings[K]): CodePreviewSettings[K];
   update(next: CodePreviewSettings, current: CodePreviewSettings, value: string): void;

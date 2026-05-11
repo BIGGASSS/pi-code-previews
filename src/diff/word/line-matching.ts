@@ -1,4 +1,4 @@
-import type { WordChangeConfidence } from "./emphasis";
+import type { WordChangeConfidence } from "./types";
 import {
   wordEmphasisSimilarityTokenValues,
   wordEmphasisTokenWeight,

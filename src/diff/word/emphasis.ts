@@ -1,5 +1,6 @@
 import { codePreviewSettings } from "../../settings/index";
 import { filterLowSignalWordEmphasis } from "./smart-filter";
+import type { ConfidentWordChangeRanges, WordChangeConfidence, WordChangeRanges } from "./types";
 import {
   isIdentifierSimilarityPart,
   isIdentifierToken,
@@ -11,23 +12,7 @@ import {
   type WordEmphasisToken,
 } from "./tokens";
 
-export {
-  wordEmphasisSimilarityTokenValues,
-  wordEmphasisTokenWeight,
-  wordEmphasisTokens,
-  type WordEmphasisToken,
-} from "./tokens";
-
-export type WordChangeRanges = {
-  removed: Array<[number, number]>;
-  added: Array<[number, number]>;
-};
-
-export type WordChangeConfidence = "high" | "medium" | "low";
-
-export type ConfidentWordChangeRanges = WordChangeRanges & {
-  confidence: WordChangeConfidence;
-};
+export type { ConfidentWordChangeRanges, WordChangeConfidence, WordChangeRanges } from "./types";
 
 export function shouldEmphasizeChangedPair(
   ranges: ConfidentWordChangeRanges,

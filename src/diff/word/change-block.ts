@@ -13,7 +13,8 @@ import {
   type ParsedDiffLine,
   type RemovedDiffLine,
 } from "../parse";
-import { changedRangesForTokensWithConfidence, type ConfidentWordChangeRanges } from "./emphasis";
+import { changedRangesForTokensWithConfidence } from "./emphasis";
+import type { ConfidentWordChangeRanges } from "./types";
 
 export type ChangedLineBlockAnalysis = {
   removed: Array<IndexedChangedLine<RemovedDiffLine>>;

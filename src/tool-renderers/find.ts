@@ -29,6 +29,7 @@ export function registerFind(pi: ExtensionAPI, cwd: string) {
       return previewShell.renderResult(context, theme, (renderContext) =>
         renderPathListResult(result, options, theme, renderContext, {
           cwd,
+          iconMode: codePreviewSettings.pathIcons,
           previewEnabled: codePreviewSettings.findResultPreview,
           collapsedLines: codePreviewSettings.pathListCollapsedLines,
           loadingLabel: "Finding…",

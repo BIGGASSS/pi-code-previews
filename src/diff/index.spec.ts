@@ -4,7 +4,6 @@ import { afterEach, beforeEach, test } from "vitest";
 import { codePreviewSettings, setCodePreviewSettings } from "../settings/index";
 import { renderComponent, stripAnsi, testTheme } from "../testing/render";
 import {
-  createProgressiveSyntaxHighlightedDiffText,
   FullWidthDiffText,
   renderPlainDiff,
   renderSyntaxHighlightedDiff,
@@ -309,10 +308,13 @@ test("word emphasis is applied synchronously for large changed lines", () => {
   const shared = Array.from({ length: 300 }, (_, index) => `token${index}`).join(" ");
   const diff = `-1 ${shared} oldValue ${shared}\n+1 ${shared} newValue ${shared}`;
   let invalidations = 0;
-  const component = createProgressiveSyntaxHighlightedDiffText(diff, undefined, testTheme(), 2, {
-    invalidate: () => invalidations++,
-  });
-  const rendered = renderComponent(component, 12000);
+  const rendered = renderSyntaxHighlightedDiff(
+    diff,
+    undefined,
+    testTheme(),
+    2,
+    () => invalidations++,
+  );
   assert.equal(invalidations, 0);
   assert.match(rendered, /\x1b\[48;2;148;62;70m\x1b\[1mold/);
   assert.match(rendered, /\x1b\[48;2;64;132;82m\x1b\[1mnew/);

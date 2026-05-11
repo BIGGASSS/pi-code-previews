@@ -2,7 +2,8 @@ import { splitLinesLimited } from "../../shared/text-lines";
 import { collectChangedDiffBlock } from "../changed-blocks";
 import { analyzeChangedLineBlock } from "./change-block";
 import { isChangedDiffLine, parseDiffLine, type ParsedDiffLine } from "../parse";
-import { shouldEmphasizeChangedPair, type WordChangeConfidence } from "./emphasis";
+import { shouldEmphasizeChangedPair } from "./emphasis";
+import type { WordChangeConfidence } from "./types";
 
 export type WordEmphasisTelemetry = {
   changedBlocks: number;

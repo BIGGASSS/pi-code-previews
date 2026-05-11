@@ -3,12 +3,8 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import {
-  getMaxWriteDiffBytes,
-  getWriteDiffSkipReason,
-  readExistingFileForPreview,
-  resolvePreviewPath,
-} from "./diff";
+import { getMaxWriteDiffBytes, getWriteDiffSkipReason, readExistingFileForPreview } from "./diff";
+import { resolvePreviewPath } from "../paths/resolve";
 
 test("resolvePreviewPath mirrors pi path expansion", () => {
   assert.equal(resolvePreviewPath("@src/file.ts", "/tmp/project"), "/tmp/project/src/file.ts");

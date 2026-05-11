@@ -79,8 +79,6 @@ export function getMaxWriteDiffBytes(): number {
   return MAX_WRITE_DIFF_BYTES;
 }
 
-export { resolvePreviewPath } from "../paths/resolve";
-
 function skippedExistingFile(
   reason: string,
   byteLength: number | undefined,
