@@ -110,20 +110,10 @@ export function hiddenLinesMarker(theme: Theme, hidden: number): string {
   return theme.fg("muted", `      --- ${hidden} lines hidden ---`);
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} bytes`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 export function trimSingleTrailingNewline(text: string): string {
   if (text.endsWith("\r\n")) return text.slice(0, -2);
   if (text.endsWith("\n")) return text.slice(0, -1);
   return text;
-}
-
-export function countLabel(count: number, singular: string, plural = `${singular}s`): string {
-  return `${count} ${count === 1 ? singular : plural}`;
 }
 
 export function metadata(theme: Theme, parts: Array<string | undefined>): string {

@@ -6,7 +6,7 @@ import {
   type WordEmphasisToken,
 } from "./word/emphasis";
 import type { AddedDiffLine, RemovedDiffLine } from "./parse";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 
 export type IndexedChangedLine<T extends AddedDiffLine | RemovedDiffLine> = {
   index: number;

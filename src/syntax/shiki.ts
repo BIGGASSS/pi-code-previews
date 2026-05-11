@@ -3,10 +3,10 @@ import { bundledThemesInfo, createHighlighter } from "shiki";
 import { positiveEnvInteger } from "../config/env";
 import { hashString } from "../cache/hash";
 import { setCodePreviewSettings, codePreviewSettings } from "../settings/index";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 import { normalizePreviewLanguageAlias } from "./language";
 
-export { escapeControlChars } from "../preview/terminal-text";
+export { escapeControlChars } from "../shared/terminal-text";
 
 let shikiHighlighter: Awaited<ReturnType<typeof createHighlighter>> | undefined;
 let shikiInitVersion = 0;

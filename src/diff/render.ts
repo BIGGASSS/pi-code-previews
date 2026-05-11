@@ -1,7 +1,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { codePreviewSettings } from "../settings/index";
 import { renderWithShiki } from "../syntax/shiki";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 import { splitLinesLimited } from "../shared/text-lines";
 import { FullWidthDiffText } from "./full-width-text";
 import { changedLineEmphasis, emphasizeChangedSpans } from "./line-emphasis";

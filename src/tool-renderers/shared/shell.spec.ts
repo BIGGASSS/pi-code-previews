@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { type Component } from "@earendil-works/pi-tui";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import { previewCacheKey } from "./cache";
-import { createCodePreviewToolShell } from "./shell";
+import { createCodePreviewToolShell } from "../../preview/tool-shell";
 import { codePreviewSettings, setCodePreviewSettings } from "../../settings/index";
 import {
   cloneCodePreviewSettingsForTest,

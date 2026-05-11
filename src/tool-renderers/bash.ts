@@ -3,9 +3,9 @@ import { createBashToolDefinition } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
 import { getBashWarnings } from "../warnings/bash";
 import { getTextContent, isTruncated } from "../tool-data";
+import { countLabel } from "../shared/format";
 import { getObjectValue } from "../shared/objects";
 import {
-  countLabel,
   previewFooter,
   previewLines,
   showingFooter,
@@ -13,8 +13,8 @@ import {
 } from "../preview/format";
 import { codePreviewSettings } from "../settings/index";
 import { renderHighlightedText } from "../syntax/shiki";
-import { escapeControlChars } from "../preview/terminal-text";
-import { shouldHideBashResult } from "./shared/bash-preview-policy";
+import { escapeControlChars } from "../shared/terminal-text";
+import { shouldHideBashResult } from "./bash-preview-policy";
 import { withSecretWarning } from "./shared/secret-preview";
 import { createCodePreviewToolShell, renderHiddenPreviewExpandHint } from "../preview/tool-shell";
 

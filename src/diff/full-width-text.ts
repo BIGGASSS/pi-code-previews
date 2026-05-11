@@ -1,7 +1,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth, type Component } from "@earendil-works/pi-tui";
 import { positiveEnvInteger } from "../config/env";
-import { visibleLength, wrapAnsiToWidth } from "../preview/terminal-text";
+import { visibleLength, wrapAnsiToWidth } from "../shared/terminal-text";
 import { createDiffBackgroundResolver, diffLineBg } from "./background";
 import { DIFF_ADD_MARKER, DIFF_REMOVE_MARKER } from "./markers";
 

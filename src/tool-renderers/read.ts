@@ -7,7 +7,7 @@ import { resolvePreviewLanguage } from "../syntax/language";
 import { renderDisplayPath } from "../paths/display";
 import { codePreviewSettings } from "../settings/index";
 import { normalizeShikiLanguage, shouldSkipHighlight } from "../syntax/shiki";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 import { renderHighlightedPreviewText } from "./shared/preview-text";
 import { withSecretWarning } from "./shared/secret-preview";
 import { createCodePreviewToolShell, renderHiddenPreviewExpandHint } from "../preview/tool-shell";

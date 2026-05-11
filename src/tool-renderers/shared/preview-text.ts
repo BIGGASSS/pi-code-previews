@@ -6,7 +6,7 @@ import {
 } from "../../preview/format";
 import { codePreviewSettings } from "../../settings/index";
 import { renderHighlightedText } from "../../syntax/shiki";
-import { escapeControlChars } from "../../preview/terminal-text";
+import { escapeControlChars } from "../../shared/terminal-text";
 
 export function renderHighlightedPreviewText(
   text: string,

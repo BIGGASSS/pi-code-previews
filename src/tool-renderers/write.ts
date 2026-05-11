@@ -7,12 +7,13 @@ import { FullWidthDiffText } from "../diff/index";
 import { createSimpleDiff } from "../diff/structured";
 import { describeDiffShape, diffSummarySeparator, summarizeDiff } from "../diff/summary";
 import { countContentLines } from "../preview/line-counts";
-import { countLabel, formatBytes, metadata, previewFooter, showingFooter } from "../preview/format";
+import { countLabel, formatBytes } from "../shared/format";
+import { metadata, previewFooter, showingFooter } from "../preview/format";
 import { resolvePreviewLanguage } from "../syntax/language";
 import { renderDisplayPath } from "../paths/display";
 import { codePreviewSettings } from "../settings/index";
 import { getShikiStatus, normalizeShikiLanguage, shouldSkipHighlight } from "../syntax/shiki";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 import {
   getWriteDiffSkipReason,
   readExistingFileForPreview,

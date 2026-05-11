@@ -2,7 +2,7 @@ import type { Theme } from "@earendil-works/pi-coding-agent";
 import { getLanguageFromPath } from "@earendil-works/pi-coding-agent";
 import { resolvePreviewLanguage } from "../syntax/language";
 import { renderHighlightedText } from "../syntax/shiki";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 
 export type ParsedGrepOutputLine = {
   path: string;

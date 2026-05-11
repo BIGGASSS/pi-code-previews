@@ -36,22 +36,13 @@ export function registerToolRenderers(
       continue;
     }
 
-    registerToolRenderer(tool, pi, cwd, toolOptions);
+    TOOL_RENDERER_REGISTRATIONS[tool](pi, cwd, toolOptions);
     options.registeredTools?.add(tool);
     activePreviewTools.add(tool);
     setCodePreviewToolStatus(tool, { state: "active" });
   }
 
   syncActiveCodePreviewTools(pi, activePreviewTools, options.activatedTools);
-}
-
-function registerToolRenderer(
-  tool: CodePreviewToolName,
-  pi: ExtensionAPI,
-  cwd: string,
-  options: BuiltinToolOptions,
-): void {
-  TOOL_RENDERER_REGISTRATIONS[tool](pi, cwd, options);
 }
 
 function syncActiveCodePreviewTools(

@@ -1,5 +1,5 @@
-import { getObjectValue } from "../../shared/objects";
-import { codePreviewSettings } from "../../settings/index";
+import { getObjectValue } from "../shared/objects";
+import { codePreviewSettings } from "../settings/index";
 
 export function shouldHideBashResult(args: unknown): boolean {
   if (!codePreviewSettings.bashResultPreview) return true;

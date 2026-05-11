@@ -2,7 +2,7 @@ import type { Theme } from "@earendil-works/pi-coding-agent";
 import { pathIcon } from "../paths/icons";
 import { codePreviewSettings, type PathIconMode } from "../settings/index";
 import { renderDisplayPath } from "../paths/display";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 
 export interface PathListRenderOptions {
   iconMode?: PathIconMode;

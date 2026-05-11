@@ -2,7 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import { isAbsolute, resolve } from "node:path";
 import { positiveEnvInteger } from "../config/env";
-import { formatBytes } from "../preview/format";
+import { formatBytes } from "../shared/format";
 import { isFileNotFound } from "../shared/errors";
 
 export type ExistingFilePreview =

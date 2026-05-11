@@ -1,7 +1,7 @@
 import { homedir } from "node:os";
 import { isAbsolute, relative } from "node:path";
 import type { Theme } from "@earendil-works/pi-coding-agent";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 
 export function formatDisplayPath(path: string, cwd: string): string {
   if (!path) return "";

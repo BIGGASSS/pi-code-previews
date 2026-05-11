@@ -34,7 +34,6 @@ export function registerLs(pi: ExtensionAPI, cwd: string) {
           emptyMarker: "(empty directory)",
           emptyLabel: () => "Empty directory",
           footerNoun: "entries",
-          iconMode: codePreviewSettings.pathIcons,
         }),
       );
     },

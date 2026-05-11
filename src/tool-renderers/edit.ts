@@ -6,11 +6,12 @@ import { getEditDiff, getEditPreviewOperations, getPathArg, getTextContent } fro
 import { FullWidthDiffText } from "../diff/index";
 import { createSimpleDiff } from "../diff/structured";
 import { diffSummarySeparator, summarizeDiff, type DiffSummary } from "../diff/summary";
-import { countLabel, showingFooter } from "../preview/format";
+import { countLabel } from "../shared/format";
+import { showingFooter } from "../preview/format";
 import { resolvePreviewLanguage } from "../syntax/language";
 import { renderDisplayPath } from "../paths/display";
 import { codePreviewSettings } from "../settings/index";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 import {
   appendDiffPreviewFooters,
   createDiffPreviewText,

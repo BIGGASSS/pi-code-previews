@@ -12,7 +12,7 @@ import { renderGrepOutputLines } from "../grep/render";
 import { renderDisplayPath } from "../paths/display";
 import { codePreviewSettings } from "../settings/index";
 import { shouldSkipHighlight } from "../syntax/shiki";
-import { escapeControlChars } from "../preview/terminal-text";
+import { escapeControlChars } from "../shared/terminal-text";
 import { renderSelectedOutputLines } from "./shared/preview-text";
 import { createCodePreviewToolShell, renderHiddenPreviewExpandHint } from "../preview/tool-shell";
 
