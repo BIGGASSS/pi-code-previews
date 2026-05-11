@@ -53,21 +53,6 @@ function previewWindowPlan(total: number, limit: number): PreviewWindowPlan {
   return { kind: "split", head, tail, shown: head + tail, hidden: total - head - tail };
 }
 
-export function previewLines(
-  lines: string[],
-  limit: number,
-  theme: Theme,
-): { lines: string[]; shown: number; hidden: number } {
-  const preview = selectPreviewLines(lines, limit);
-  return {
-    lines: preview.entries.map((entry) =>
-      entry.kind === "hidden" ? hiddenLinesMarker(theme, entry.hidden) : entry.line,
-    ),
-    shown: preview.shown,
-    hidden: preview.hidden,
-  };
-}
-
 export function selectPreviewTextLines(
   text: string,
   limit: number,

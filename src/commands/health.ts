@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { codePreviewSettings } from "../settings";
+import { codePreviewSettings } from "../settings/index";
 import { getSettingsPath } from "../settings/store";
 import { getShikiStatus } from "../syntax/shiki";
 import { formatEnabledCodePreviewTools } from "../tools/selection";

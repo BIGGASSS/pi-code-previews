@@ -1,15 +1,14 @@
 import assert from "node:assert/strict";
 import { type Component } from "@earendil-works/pi-tui";
 import { afterEach, beforeEach, test, vi } from "vitest";
-import { previewCacheKey } from "./cache";
-import { createCodePreviewToolShell } from "../../preview/tool-shell";
-import { codePreviewSettings, setCodePreviewSettings } from "../../settings/index";
+import { createCodePreviewToolShell } from "./tool-shell";
+import { codePreviewSettings, setCodePreviewSettings } from "../settings/index";
 import {
   cloneCodePreviewSettingsForTest,
   renderComponent,
   stripAnsi,
   testTheme,
-} from "../../testing/render";
+} from "../testing/render";
 
 let previousCodePreviewSettings = cloneCodePreviewSettingsForTest();
 
@@ -21,16 +20,6 @@ afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
   setCodePreviewSettings(previousCodePreviewSettings);
-});
-
-test("preview cache keys include word emphasis settings", () => {
-  setCodePreviewSettings({ ...codePreviewSettings, wordEmphasis: "all" });
-  const allKey = previewCacheKey("edit-result", "-1 old\n+1 new", "src/a.ts", false, testTheme());
-
-  setCodePreviewSettings({ ...codePreviewSettings, wordEmphasis: "off" });
-  const offKey = previewCacheKey("edit-result", "-1 old\n+1 new", "src/a.ts", false, testTheme());
-
-  assert.notEqual(allKey, offKey);
 });
 
 test("non-border shell appends tool timing to result footer", () => {

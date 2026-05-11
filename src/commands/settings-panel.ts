@@ -1,12 +1,12 @@
 import { getSettingsListTheme } from "@earendil-works/pi-coding-agent";
 import { SettingsList } from "@earendil-works/pi-tui";
-import { codePreviewSettings, setCodePreviewSettings, updateSetting } from "../settings";
+import { codePreviewSettings, setCodePreviewSettings, updateSetting } from "../settings/index";
 import {
   flushSettingsSaveQueue,
   formatSettingsSaveError,
   queueSettingsSave,
 } from "../settings/persistence";
-import { createSettingsCategoryItems, isSettingsGroupItemId } from "../settings/ui";
+import { createSettingsCategoryItems, isSettingsGroupItemId } from "../settings/ui/index";
 import { initializeShiki } from "../syntax/shiki";
 
 export interface SettingsListControllerOptions {

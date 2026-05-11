@@ -1,10 +1,5 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
-import {
-  createProgressiveSyntaxHighlightedDiffText,
-  FullWidthDiffText,
-  renderPlainDiff,
-  renderSyntaxHighlightedDiff,
-} from "../../diff";
+import { FullWidthDiffText, renderPlainDiff, renderSyntaxHighlightedDiff } from "../../diff";
 import { previewFooter, showingFooter } from "../../preview/format";
 import type { CodePreviewSettings } from "../../settings/index";
 import { shouldSkipHighlight } from "../../syntax/shiki";
@@ -22,21 +17,25 @@ export function createDiffPreviewText(
     invalidate?: () => void;
   },
 ): FullWidthDiffText {
-  const syntaxHighlightSkipped = shouldSkipHighlight(diff);
-  const decorate = (body: string) =>
-    appendDiffPreviewFooters(options.decorate ? options.decorate(body) : body, theme, {
+  const { body, syntaxHighlightSkipped } = renderDiffPreviewBody(
+    diff,
+    lang,
+    theme,
+    limit,
+    options.invalidate,
+  );
+  const decorated = appendDiffPreviewFooters(
+    options.decorate ? options.decorate(body) : body,
+    theme,
+    {
       totalLines: options.totalLines,
       limit,
       hiddenLineNoun: options.hiddenLineNoun,
       syntaxHighlightSkipped,
       skipHighlightLabel: options.skipHighlightLabel,
-    });
-  return syntaxHighlightSkipped
-    ? new FullWidthDiffText(decorate(renderPlainDiff(diff, theme, limit)), theme)
-    : createProgressiveSyntaxHighlightedDiffText(diff, lang, theme, limit, {
-        decorate,
-        invalidate: options.invalidate,
-      });
+    },
+  );
+  return new FullWidthDiffText(decorated, theme);
 }
 
 export function renderDiffPreviewBody(

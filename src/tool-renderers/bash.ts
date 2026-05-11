@@ -5,12 +5,7 @@ import { getBashWarnings } from "../warnings/bash";
 import { getTextContent, isTruncated } from "../tool-data";
 import { countLabel } from "../shared/format";
 import { getObjectValue } from "../shared/objects";
-import {
-  previewFooter,
-  previewLines,
-  showingFooter,
-  trimSingleTrailingNewline,
-} from "../preview/format";
+import { previewFooter, showingFooter, trimSingleTrailingNewline } from "../preview/format";
 import { codePreviewSettings } from "../settings/index";
 import { renderHighlightedText } from "../syntax/shiki";
 import { escapeControlChars } from "../shared/terminal-text";
@@ -18,6 +13,7 @@ import { shouldHideBashResult } from "./bash-preview-policy";
 import { withSecretWarning } from "./shared/secret-preview";
 import { createCodePreviewToolShell } from "../preview/tool-shell";
 import { renderHiddenPreviewPrelude, renderResultPrelude } from "./shared/result-prelude";
+import { renderSelectedOutputLines } from "./shared/preview-text";
 
 export function registerBash(pi: ExtensionAPI, cwd: string, options?: BashToolOptions) {
   const originalBash = createBashToolDefinition(cwd, options);
@@ -75,7 +71,7 @@ export function registerBash(pi: ExtensionAPI, cwd: string, options?: BashToolOp
               )
           : [];
         const limit = expanded ? lines.length : 8;
-        const preview = previewLines(lines, limit, theme);
+        const preview = renderSelectedOutputLines(lines, limit, theme, (chunk) => chunk);
         let text = preview.lines.length
           ? withSecretWarning(output, theme, preview.lines.join("\n"))
           : theme.fg("muted", "No output");

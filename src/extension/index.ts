@@ -1,7 +1,7 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerHealthCommand } from "../commands/health";
 import { registerSettingsCommand } from "../commands/settings";
-import { codePreviewSettings } from "../settings";
+import { codePreviewSettings } from "../settings/index";
 import { loadCodePreviewSettings } from "../settings/bootstrap";
 import { initializeShiki } from "../syntax/shiki";
 import { type CodePreviewToolName } from "../tools/names";
