@@ -92,8 +92,7 @@ export function renderHighlightedText(
   const normalized = text.replace(/\t/g, "   ");
   const plain = () =>
     normalized.split("\n").map((line) => theme.fg("toolOutput", escapeControlChars(line)));
-  if (!codePreviewSettings.syntaxHighlighting || !lang || shouldSkipHighlight(normalized))
-    return plain();
+  if (!codePreviewSettings.syntaxHighlighting || !lang) return plain();
   return renderWithShiki(normalized, lang, invalidate) ?? plain();
 }
 

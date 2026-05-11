@@ -123,13 +123,13 @@ export function matchChangedLines(
         confidence: "medium",
       },
     ];
+  const positions = changedLinePositions(removed, added);
   const confidentPairs = confidentChangedLinePairs(
-    removed,
-    added,
+    positions,
     scores,
     addPositionalFallbackPairs(removed, added, scores, similarPairs),
   );
-  return addHighConfidenceCrossingPairs(removed, added, scores, confidentPairs);
+  return addHighConfidenceCrossingPairs(removed, added, scores, positions, confidentPairs);
 }
 
 const MIN_CHANGED_LINE_PAIR_SCORE = 0.45;
@@ -299,18 +299,30 @@ function similarityTokenWeight(documents: ChangedLineSimilarityDocuments): Simil
   };
 }
 
-function confidentChangedLinePairs(
+type ChangedLinePositions = {
+  removed: Map<number, number>;
+  added: Map<number, number>;
+};
+
+function changedLinePositions(
   removed: Array<IndexedChangedLine<RemovedDiffLine>>,
   added: Array<IndexedChangedLine<AddedDiffLine>>,
+): ChangedLinePositions {
+  return {
+    removed: new Map(removed.map((line, index) => [line.index, index])),
+    added: new Map(added.map((line, index) => [line.index, index])),
+  };
+}
+
+function confidentChangedLinePairs(
+  positions: ChangedLinePositions,
   scores: number[][],
   pairs: Array<[number, number]>,
 ): ChangedLinePair[] {
-  const removedPositions = new Map(removed.map((line, index) => [line.index, index]));
-  const addedPositions = new Map(added.map((line, index) => [line.index, index]));
   const confidentPairs: ChangedLinePair[] = [];
   for (const [removedIndex, addedIndex] of pairs) {
-    const removedPosition = removedPositions.get(removedIndex);
-    const addedPosition = addedPositions.get(addedIndex);
+    const removedPosition = positions.removed.get(removedIndex);
+    const addedPosition = positions.added.get(addedIndex);
     if (removedPosition === undefined || addedPosition === undefined) continue;
     const score = scores[removedPosition]?.[addedPosition] ?? 0;
     const competingScore = competingChangedLineScore(
@@ -384,15 +396,14 @@ function addHighConfidenceCrossingPairs(
   removed: Array<IndexedChangedLine<RemovedDiffLine>>,
   added: Array<IndexedChangedLine<AddedDiffLine>>,
   scores: number[][],
+  positions: ChangedLinePositions,
   pairs: ChangedLinePair[],
 ): ChangedLinePair[] {
-  const removedPositions = new Map(removed.map((line, index) => [line.index, index]));
-  const addedPositions = new Map(added.map((line, index) => [line.index, index]));
   const usedRemoved = new Set<number>();
   const usedAdded = new Set<number>();
   for (const pair of pairs) {
-    const removedPosition = removedPositions.get(pair.removedIndex);
-    const addedPosition = addedPositions.get(pair.addedIndex);
+    const removedPosition = positions.removed.get(pair.removedIndex);
+    const addedPosition = positions.added.get(pair.addedIndex);
     if (removedPosition !== undefined) usedRemoved.add(removedPosition);
     if (addedPosition !== undefined) usedAdded.add(addedPosition);
   }
@@ -425,7 +436,7 @@ function addHighConfidenceCrossingPairs(
 
   return out.sort(
     (a, b) =>
-      (removedPositions.get(a.removedIndex) ?? 0) - (removedPositions.get(b.removedIndex) ?? 0),
+      (positions.removed.get(a.removedIndex) ?? 0) - (positions.removed.get(b.removedIndex) ?? 0),
   );
 }
 

@@ -3,6 +3,7 @@ import { codePreviewSettings } from "../settings/index";
 import { renderWithShiki } from "../syntax/shiki";
 import { escapeControlChars } from "../shared/terminal-text";
 import { splitLinesLimited } from "../shared/text-lines";
+import { collectChangedDiffBlock } from "./changed-blocks";
 import { FullWidthDiffText } from "./full-width-text";
 import { changedLineEmphasis, emphasizeChangedSpans } from "./line-emphasis";
 import { DIFF_ADD_MARKER, DIFF_REMOVE_MARKER } from "./markers";
@@ -102,14 +103,7 @@ function renderDiff(diff: string, options: DiffRenderOptions): string {
     }
 
     if (options.emphasizeChangedPairs && isChangedDiffLine(parsed)) {
-      const block: ParsedDiffLine[] = [];
-      let end = i;
-      while (end < lines.length) {
-        const next = parsedLines[end];
-        if (!next || !isChangedDiffLine(next)) break;
-        block.push(next);
-        end++;
-      }
+      const { block, end } = collectChangedDiffBlock(parsedLines, i);
       out.push(
         ...renderChangeBlock(block, lang, options.theme, lineNumberWidth, options.invalidate),
       );

@@ -34,7 +34,7 @@ export function renderHighlightedPreviewText(
 
 function renderHighlightedPreviewEntries(
   preview: {
-    entries: ReturnType<typeof selectPreviewLines<string>>["entries"];
+    entries: Array<PreviewLineEntry<string>>;
     shown: number;
     hidden: number;
   },

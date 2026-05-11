@@ -13,6 +13,8 @@ import { SETTINGS_GROUP_ID_PREFIX } from "./registry";
 import {
   ALL_CODE_PREVIEW_TOOLS,
   parseCodePreviewTools,
+  parseToolToggleId,
+  toolToggleId,
   type CodePreviewToolName,
 } from "../../tools/names";
 import { formatToolsSettingValue } from "../../tools/policy";
@@ -116,7 +118,7 @@ function createToolToggleItems(
     if (status?.state === "skipped-conflict") {
       const owner = formatToolOwner(status.owner);
       return {
-        id: `tool:${tool}`,
+        id: toolToggleId(tool),
         label: `${tool} preview`,
         description: `${tool} preview is disabled because ${owner} owns the ${tool} tool. Disable that extension or change package order to let pi-code-previews own it.`,
         currentValue: `disabled (${owner})`,
@@ -126,18 +128,13 @@ function createToolToggleItems(
     const statusText =
       status?.state === "active" ? "currently active" : "takes effect after /reload";
     return {
-      id: `tool:${tool}`,
+      id: toolToggleId(tool),
       label: `${tool} preview`,
       description: `${tool} preview registration (${statusText}). Tools already owned by another extension are disabled automatically.`,
       currentValue: enabledTools.has(tool) ? "on" : "off",
       values: ["on", "off"],
     };
   });
-}
-
-function parseToolToggleId(id: string): CodePreviewToolName | undefined {
-  const tool = id.startsWith("tool:") ? id.slice("tool:".length) : "";
-  return ALL_CODE_PREVIEW_TOOLS.find((candidate) => candidate === tool);
 }
 
 export class ThemeSelectSubmenu extends Container {

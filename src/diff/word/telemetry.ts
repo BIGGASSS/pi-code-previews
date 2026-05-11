@@ -1,4 +1,5 @@
 import { splitLinesLimited } from "../../shared/text-lines";
+import { collectChangedDiffBlock } from "../changed-blocks";
 import { analyzeChangedLineBlock } from "./change-block";
 import { isChangedDiffLine, parseDiffLine, type ParsedDiffLine } from "../parse";
 import { shouldEmphasizeChangedPair, type WordChangeConfidence } from "./emphasis";
@@ -24,14 +25,7 @@ export function wordEmphasisTelemetry(
   for (let i = 0; i < lines.length; i++) {
     const parsed = parsedLines[i];
     if (!parsed || !isChangedDiffLine(parsed)) continue;
-    const block: ParsedDiffLine[] = [];
-    let end = i;
-    while (end < lines.length) {
-      const next = parsedLines[end];
-      if (!next || !isChangedDiffLine(next)) break;
-      block.push(next);
-      end++;
-    }
+    const { block, end } = collectChangedDiffBlock(parsedLines, i);
     addChangeBlockTelemetry(block, telemetry);
     i = end - 1;
   }
