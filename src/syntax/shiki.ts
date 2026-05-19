@@ -1,5 +1,10 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
-import { bundledThemesInfo, createHighlighter } from "shiki";
+import {
+  bundledThemesInfo,
+  createHighlighter,
+  type LanguageRegistration,
+  type ThemeRegistrationAny,
+} from "shiki";
 import { positiveEnvInteger } from "../config/env";
 import { hashString } from "../cache/hash";
 import { codePreviewSettings } from "../settings/index";
@@ -41,9 +46,13 @@ export async function initializeShiki(theme: string) {
   const initVersion = ++shikiInitVersion;
   shikiInitializingTheme = theme;
   try {
+    const [themeRegistration, ...languages] = await Promise.all([
+      loadBundledShikiTheme(theme),
+      ...PRELOADED_SHIKI_LANGUAGES.map(loadBundledShikiLanguage),
+    ]);
     const nextHighlighter = await createHighlighter({
-      themes: [theme],
-      langs: [...PRELOADED_SHIKI_LANGUAGES],
+      themes: [themeRegistration],
+      langs: languages,
     });
     if (initVersion !== shikiInitVersion) {
       nextHighlighter.dispose();
@@ -209,8 +218,8 @@ function requestLanguageLoad(shikiLang: string, invalidate: (() => void) | undef
   if (!highlighter) return;
   const generation = shikiHighlighterGeneration;
   pendingShikiLanguages.add(shikiLang);
-  void highlighter
-    .loadLanguage(shikiLang as never)
+  void loadBundledShikiLanguage(shikiLang)
+    .then((language) => highlighter.loadLanguage(language))
     .then(() => {
       if (generation !== shikiHighlighterGeneration) return;
       loadedShikiLanguages.add(shikiLang);
@@ -232,6 +241,16 @@ function requestLanguageLoad(shikiLang: string, invalidate: (() => void) | undef
 
 export function normalizeShikiLanguage(lang: string): string {
   return normalizePreviewLanguageAlias(lang);
+}
+
+async function loadBundledShikiTheme(theme: string): Promise<ThemeRegistrationAny> {
+  const imported = await import(/* @vite-ignore */ `@shikijs/themes/${theme}`);
+  return imported.default as ThemeRegistrationAny;
+}
+
+async function loadBundledShikiLanguage(language: string): Promise<LanguageRegistration[]> {
+  const imported = await import(/* @vite-ignore */ `@shikijs/langs/${language}`);
+  return imported.default as LanguageRegistration[];
 }
 
 function normalizeShikiContrast(ansi: string): string {
