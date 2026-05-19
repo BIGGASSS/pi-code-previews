@@ -64,6 +64,8 @@
     "pack:dry": "npm pack --dry-run"
   },
   "dependencies": {
+    "@shikijs/langs": "^4.0.2",
+    "@shikijs/themes": "^4.0.2",
     "diff": "^8.0.4",
     "shiki": "^4.0.2"
   },
