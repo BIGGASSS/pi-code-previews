@@ -10,7 +10,6 @@ import { registerToolRenderers } from "../tool-renderers/registration";
 export async function codePreviews(pi: ExtensionAPI) {
   await loadCodePreviewSettings();
   const registeredTools = new Set<CodePreviewToolName>();
-  const activatedTools = new Set<CodePreviewToolName>();
 
   registerHealthCommand(pi);
   registerSettingsCommand(pi);
@@ -19,6 +18,6 @@ export async function codePreviews(pi: ExtensionAPI) {
     await loadCodePreviewSettings(ctx.cwd);
     if (codePreviewSettings.syntaxHighlighting)
       void initializeShiki(codePreviewSettings.shikiTheme);
-    registerToolRenderers(pi, ctx.cwd, { registeredTools, activatedTools });
+    registerToolRenderers(pi, ctx.cwd, { registeredTools });
   });
 }

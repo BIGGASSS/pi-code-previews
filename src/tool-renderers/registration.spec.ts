@@ -2,23 +2,21 @@ import assert from "node:assert/strict";
 import { test, vi } from "vitest";
 import { registerToolRenderers } from "./registration";
 import { defaultCodePreviewSettings, setCodePreviewSettings } from "../settings/index";
-import type { CodePreviewToolName } from "../tools/names";
 import { formatActiveCodePreviewTools, formatSkippedCodePreviewToolLines } from "../tools/status";
 import { findRenderer, preserveCodePreviewToolsEnv, registerRenderers } from "./testing";
 import { createToolRenderContext, renderComponent, stripAnsi, testTheme } from "../testing/render";
 
 preserveCodePreviewToolsEnv();
 
-test("renderer registration activates enabled preview tool overrides", () => {
+test("renderer registration registers enabled preview overrides without activating tools", () => {
   process.env.CODE_PREVIEW_TOOLS = "grep,find,ls";
   const registered: Array<{ name: string }> = [];
-  let activeTools = ["read", "bash"];
+  const activeTools = ["read", "bash"];
+  const setActiveTools = vi.fn();
   registerToolRenderers(
     {
       getActiveTools: () => activeTools,
-      setActiveTools: (tools: string[]) => {
-        activeTools = tools;
-      },
+      setActiveTools,
       registerTool: (tool: unknown) => registered.push(tool as { name: string }),
     } as never,
     "/tmp/project",
@@ -29,58 +27,28 @@ test("renderer registration activates enabled preview tool overrides", () => {
     registered.map((tool) => tool.name),
     ["grep", "find", "ls"],
   );
-  assert.deepEqual(activeTools, ["read", "bash", "grep", "find", "ls"]);
+  assert.deepEqual(activeTools, ["read", "bash"]);
+  assert.equal(setActiveTools.mock.calls.length, 0);
   assert.equal(formatActiveCodePreviewTools(), "grep, find, ls");
 });
 
-test("renderer registration removes previously activated previews when disabled", () => {
-  const registeredTools = new Set<CodePreviewToolName>();
-  const activatedTools = new Set<CodePreviewToolName>();
-  let activeTools = ["read", "bash"];
-  const pi = {
-    getActiveTools: () => activeTools,
-    setActiveTools: (tools: string[]) => {
-      activeTools = tools;
-    },
-    registerTool: () => undefined,
-  };
-
-  process.env.CODE_PREVIEW_TOOLS = "grep";
-  registerToolRenderers(pi as never, "/tmp/project", {
-    registeredTools,
-    activatedTools,
-    toolOptions: {},
-  });
-  assert.deepEqual(activeTools, ["read", "bash", "grep"]);
-  assert.deepEqual([...activatedTools], ["grep"]);
-
-  process.env.CODE_PREVIEW_TOOLS = "none";
-  registerToolRenderers(pi as never, "/tmp/project", {
-    registeredTools,
-    activatedTools,
-    toolOptions: {},
-  });
-  assert.deepEqual(activeTools, ["read", "bash"]);
-  assert.deepEqual([...activatedTools], []);
-});
-
-test("renderer registration does not remove tools that were already active", () => {
-  const activatedTools = new Set<CodePreviewToolName>();
+test("renderer registration does not remove tools that are already active", () => {
   let activeTools = ["read", "bash", "grep"];
+  const setActiveTools = vi.fn((tools: string[]) => {
+    activeTools = tools;
+  });
   const pi = {
     getActiveTools: () => activeTools,
-    setActiveTools: (tools: string[]) => {
-      activeTools = tools;
-    },
+    setActiveTools,
     registerTool: () => undefined,
   };
 
   process.env.CODE_PREVIEW_TOOLS = "grep";
-  registerToolRenderers(pi as never, "/tmp/project", { activatedTools, toolOptions: {} });
+  registerToolRenderers(pi as never, "/tmp/project", { toolOptions: {} });
   process.env.CODE_PREVIEW_TOOLS = "none";
-  registerToolRenderers(pi as never, "/tmp/project", { activatedTools, toolOptions: {} });
+  registerToolRenderers(pi as never, "/tmp/project", { toolOptions: {} });
   assert.deepEqual(activeTools, ["read", "bash", "grep"]);
-  assert.deepEqual([...activatedTools], []);
+  assert.equal(setActiveTools.mock.calls.length, 0);
 });
 
 test("renderer registration skips tools already owned by another extension", () => {

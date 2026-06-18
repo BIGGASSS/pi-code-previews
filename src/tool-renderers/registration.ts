@@ -13,7 +13,6 @@ import { registerWrite } from "./write";
 
 export interface RegisterToolRenderersOptions {
   registeredTools?: Set<CodePreviewToolName>;
-  activatedTools?: Set<CodePreviewToolName>;
   toolOptions?: BuiltinToolOptions;
 }
 
@@ -42,13 +41,10 @@ export function registerToolRenderers(
   resetCodePreviewToolStatuses(enabledTools);
   const existingTools = getExistingToolsByName(pi);
   const toolOptions = options.toolOptions ?? getBuiltinToolOptions(cwd);
-  const activePreviewTools = new Set<CodePreviewToolName>();
-
   for (const tool of ALL_CODE_PREVIEW_TOOLS) {
     if (!enabledTools.has(tool)) continue;
     if (options.registeredTools?.has(tool)) {
       setCodePreviewToolStatus(tool, { state: "active" });
-      activePreviewTools.add(tool);
       continue;
     }
 
@@ -60,37 +56,7 @@ export function registerToolRenderers(
 
     TOOL_RENDERER_REGISTRATIONS[tool](pi, cwd, toolOptions);
     options.registeredTools?.add(tool);
-    activePreviewTools.add(tool);
     setCodePreviewToolStatus(tool, { state: "active" });
-  }
-
-  syncActiveCodePreviewTools(pi, activePreviewTools, options.activatedTools);
-}
-
-function syncActiveCodePreviewTools(
-  pi: ExtensionAPI,
-  desiredTools: Set<CodePreviewToolName>,
-  activatedTools: Set<CodePreviewToolName> | undefined,
-): void {
-  if (desiredTools.size === 0 && (!activatedTools || activatedTools.size === 0)) return;
-  const getActiveTools = (pi as Partial<ExtensionAPI>).getActiveTools;
-  const setActiveTools = (pi as Partial<ExtensionAPI>).setActiveTools;
-  if (typeof getActiveTools !== "function" || typeof setActiveTools !== "function") return;
-  try {
-    const current = getActiveTools.call(pi);
-    const currentSet = new Set(current);
-    const additions = [...desiredTools].filter((tool) => !currentSet.has(tool));
-    const removals = activatedTools
-      ? [...activatedTools].filter((tool) => !desiredTools.has(tool))
-      : [];
-    const removalsInCurrent = new Set(removals.filter((tool) => currentSet.has(tool)));
-    const next = current.filter((tool) => !removalsInCurrent.has(tool as CodePreviewToolName));
-    next.push(...additions);
-    if (additions.length > 0 || removalsInCurrent.size > 0) setActiveTools.call(pi, next);
-    for (const tool of additions) activatedTools?.add(tool);
-    for (const tool of removals) activatedTools?.delete(tool);
-  } catch {
-    // Tool activation is best effort for older pi versions.
   }
 }
 

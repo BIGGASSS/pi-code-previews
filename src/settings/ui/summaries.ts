@@ -32,8 +32,8 @@ export function summarizeBashPreviews(settings: CodePreviewSettings): string {
 
 export function summarizeTools(settings: CodePreviewSettings): string {
   if (settings.tools.length === 0) return "none";
-  if (settings.tools.length === ALL_CODE_PREVIEW_TOOLS.length) return "all tools";
-  return `${settings.tools.length}/${ALL_CODE_PREVIEW_TOOLS.length} tools`;
+  if (settings.tools.length === ALL_CODE_PREVIEW_TOOLS.length) return "all previews";
+  return `${settings.tools.length}/${ALL_CODE_PREVIEW_TOOLS.length} previews`;
 }
 
 export function summarizeWarnings(settings: CodePreviewSettings): string {

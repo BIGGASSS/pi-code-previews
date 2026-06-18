@@ -79,7 +79,7 @@ test("extension entrypoint registers commands and session renderer wiring", asyn
     { cwd: root },
   );
   assert.deepEqual(registeredTools, ["grep"]);
-  assert.deepEqual(activeTools, ["read", "bash", "grep"]);
+  assert.deepEqual(activeTools, ["read", "bash"]);
 });
 
 test("health command renders current settings", async () => {

@@ -99,7 +99,7 @@ test("diff background rows do NOT reset their own background", () => {
 });
 
 test("diff background reaches right padding even after truncateToWidth reset", () => {
-  const theme: ReturnType<typeof testTheme> = {
+  const theme = {
     bold: (text: string) => `\x1b[1m${text}\x1b[22m`,
     fg: (key: string, text: string) => {
       const colors: Record<string, string> = {
@@ -108,9 +108,7 @@ test("diff background reaches right padding even after truncateToWidth reset", (
       const c = colors[key] ?? "";
       return c ? `${c}${text}\x1b[39m` : text;
     },
-  };
-  const bg = createDiffBackgroundResolver(theme)("add")!;
-
+  } as ReturnType<typeof testTheme>;
   // Simulate what happens when truncateToWidth appends 0m then the line is boxed
   const line = theme.fg("toolDiffAdded", "+ 33 │ ") + `\x1b[38;2;180;120;50msome code\x1b[39m`;
   const withBg = diffLineBg("add", line, createDiffBackgroundResolver(theme));

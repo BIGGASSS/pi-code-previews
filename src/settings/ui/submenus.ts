@@ -93,7 +93,11 @@ export class ToolPreviewSettingsSubmenu extends Container {
 
     this.addChild(new Text("Preview tools", 0, 0));
     this.addChild(
-      new Text("Toggle tool previews individually. Changes take effect after /reload.", 0, 0),
+      new Text(
+        "Toggle preview registration individually. This does not enable or disable Pi tools.",
+        0,
+        0,
+      ),
     );
     this.addChild(new Spacer(1));
     this.addChild(this.settingsList);
@@ -127,11 +131,11 @@ function createToolToggleItems(
     }
 
     const statusText =
-      status?.state === "active" ? "currently active" : "takes effect after /reload";
+      status?.state === "active" ? "currently registered" : "takes effect after /reload";
     return {
       id: toolToggleId(tool),
       label: `${tool} preview`,
-      description: `${tool} preview registration (${statusText}). Tools already owned by another extension are disabled automatically.`,
+      description: `${tool} preview registration (${statusText}). This does not enable or disable the ${tool} tool. Tools already owned by another extension are disabled automatically.`,
       currentValue: formatOnOff(enabledTools.has(tool)),
       values: [...ON_OFF_VALUES],
     };

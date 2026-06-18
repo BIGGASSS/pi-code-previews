@@ -193,7 +193,7 @@ const CODE_PREVIEW_SETTING_ITEM_DEFINITIONS = {
   tools: {
     label: "Preview tools",
     description:
-      "Open granular tool preview toggles. Changes take effect after /reload. Tools already owned by another extension are skipped automatically.",
+      "Open granular preview toggles. Changes take effect after /reload. This does not enable or disable Pi tools. Tools already owned by another extension are skipped automatically.",
   },
 } as const satisfies Record<
   Exclude<CodePreviewEditableSettingId, "resetToDefaults">,

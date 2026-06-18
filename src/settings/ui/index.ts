@@ -91,9 +91,9 @@ export function createSettingsCategoryItems(
     groupItem("outputPreviews"),
     {
       id: "tools",
-      label: "Enabled tools",
+      label: "Enabled previews",
       description:
-        "Toggle tool previews individually. Changes take effect after /reload. Tools already owned by another extension are skipped automatically.",
+        "Toggle preview registration individually. Changes take effect after /reload. This does not enable or disable Pi tools. Tools already owned by another extension are skipped automatically.",
       currentValue: summarizeTools(current),
       submenu: (_currentValue, done) =>
         new ToolPreviewSettingsSubmenu(formatSettingValue(getCurrent(), "tools"), done),
