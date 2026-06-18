@@ -9,30 +9,6 @@ import { createToolRenderContext, renderComponent, stripAnsi, testTheme } from "
 
 preserveCodePreviewToolsEnv();
 
-test("renderer registration leaves search/list tools disabled by default", () => {
-  delete process.env.CODE_PREVIEW_TOOLS;
-  setCodePreviewSettings(defaultCodePreviewSettings);
-  const registered: Array<{ name: string }> = [];
-  let activeTools = ["read", "bash"];
-  registerToolRenderers(
-    {
-      getActiveTools: () => activeTools,
-      setActiveTools: (tools: string[]) => {
-        activeTools = tools;
-      },
-      registerTool: (tool: unknown) => registered.push(tool as { name: string }),
-    } as never,
-    "/tmp/project",
-    { toolOptions: {} },
-  );
-
-  assert.deepEqual(
-    registered.map((tool) => tool.name),
-    ["bash", "read", "write", "edit"],
-  );
-  assert.deepEqual(activeTools, ["read", "bash", "write", "edit"]);
-});
-
 test("renderer registration activates enabled preview tool overrides", () => {
   process.env.CODE_PREVIEW_TOOLS = "grep,find,ls";
   const registered: Array<{ name: string }> = [];

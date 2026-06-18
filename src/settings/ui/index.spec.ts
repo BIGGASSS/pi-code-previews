@@ -134,7 +134,7 @@ test("settings panel categories keep the top level compact", () => {
     ["Appearance", "Output previews", "Enabled tools", "Warnings & safety", "Advanced"],
   );
   assert.equal(items.filter((item) => isSettingsGroupItemId(item.id)).length, 4);
-  assert.equal(items.find((item) => item.id === "tools")?.currentValue, "4/7 tools");
+  assert.equal(items.find((item) => item.id === "tools")?.currentValue, "all tools");
 });
 
 test("empty tool selections stay explicit in the settings UI", () => {

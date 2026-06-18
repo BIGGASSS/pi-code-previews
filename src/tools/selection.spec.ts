@@ -27,13 +27,6 @@ test("CODE_PREVIEW_TOOLS selects enabled renderers", () => {
   assert.equal(formatEnabledCodePreviewTools(), "write, edit, grep");
 });
 
-test("default settings leave search/list preview tools disabled", () => {
-  delete process.env.CODE_PREVIEW_TOOLS;
-  setCodePreviewSettings(defaultCodePreviewSettings);
-  assert.deepEqual([...getEnabledCodePreviewTools()], ["bash", "read", "write", "edit"]);
-  assert.equal(formatEnabledCodePreviewTools(), "bash, read, write, edit");
-});
-
 test("settings select enabled renderers when CODE_PREVIEW_TOOLS is unset", () => {
   delete process.env.CODE_PREVIEW_TOOLS;
   setCodePreviewSettings({ ...defaultCodePreviewSettings, tools: ["bash", "write", "edit"] });

@@ -10,13 +10,6 @@ export const ALL_CODE_PREVIEW_TOOLS = [
 
 export type CodePreviewToolName = (typeof ALL_CODE_PREVIEW_TOOLS)[number];
 
-export const DEFAULT_CODE_PREVIEW_TOOLS = [
-  "bash",
-  "read",
-  "write",
-  "edit",
-] as const satisfies readonly CodePreviewToolName[];
-
 const CODE_PREVIEW_TOOL_TOGGLE_ID_PREFIX = "tool:";
 
 export function isCodePreviewToolName(value: string): value is CodePreviewToolName {

@@ -2,7 +2,7 @@
 
 Syntax-highlighted previews for pi's built-in tool calls.
 
-`pi-code-previews` makes `bash`, `read`, `write`, `edit`, `grep`, `find`, and `ls` output easier to scan in the pi TUI when those previews are enabled, without changing what the tools do. If another extension already owns one of those tools, `pi-code-previews` skips that preview instead of conflicting with it.
+`pi-code-previews` makes `bash`, `read`, `write`, `edit`, `grep`, `find`, and `ls` output easier to scan in the pi TUI without changing what the tools do. If another extension already owns one of those tools, `pi-code-previews` skips that preview instead of conflicting with it.
 
 ## Features
 
@@ -36,8 +36,9 @@ Once installed, previews are enhanced automatically for:
 - `read`
 - `write`
 - `edit`
-
-`grep`, `find`, and `ls` previews are available but disabled by default so installing this extension does not enable those Pi tools. Opt in with the Preview tools submenu or `CODE_PREVIEW_TOOLS`.
+- `grep`
+- `find`
+- `ls`
 
 Open settings inside pi with:
 
@@ -93,14 +94,14 @@ You can set defaults in `.pi/settings.json`:
     "readContentPreview": false,
     "writeContentPreview": false,
     "editDiffPreview": false,
-    "grepResultPreview": true,
-    "findResultPreview": true,
-    "lsResultPreview": true,
+    "grepResultPreview": false,
+    "findResultPreview": false,
+    "lsResultPreview": false,
     "bashResultPreview": false,
     "grepCollapsedLines": 40,
     "pathListCollapsedLines": 40,
     "pathIcons": "unicode",
-    "tools": ["bash", "read", "write", "edit"]
+    "tools": ["bash", "write", "edit", "find", "ls"]
   }
 }
 ```
@@ -135,7 +136,7 @@ CODE_PREVIEW_PATH_ICONS=unicode # unicode, nerd, or off
 CODE_PREVIEW_TOOLS=write,edit,grep # comma/space list, all, or none
 ```
 
-`CODE_PREVIEW_TOOLS` overrides `codePreview.tools` for the current pi process. By default, `codePreview.tools` is `bash, read, write, edit`; add `grep`, `find`, or `ls` to opt into those previews.
+`CODE_PREVIEW_TOOLS` overrides `codePreview.tools` for the current pi process.
 
 When content/result/diff previews are disabled, collapsed successful output or code previews are hidden while the tool call stays visible; use pi's expand shortcut to view them on demand. `CODE_PREVIEW_WRITE_CONTENT=false` hides collapsed write content and write diffs, and `CODE_PREVIEW_EDIT_DIFF=false` hides collapsed proposed/applied edit diffs. `CODE_PREVIEW_BASH_RESULTS=false` applies to all successful `bash` output, while grep/find/ls result toggles also hide matching `bash` commands that start with `grep`, `find`, or `ls`.
 

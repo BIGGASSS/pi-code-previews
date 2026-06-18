@@ -1,5 +1,5 @@
 import { parsePositiveInteger, positiveEnvInteger } from "../config/env";
-import { DEFAULT_CODE_PREVIEW_TOOLS } from "../tools/names";
+import { ALL_CODE_PREVIEW_TOOLS } from "../tools/names";
 import {
   isBundledThemeName,
   isDiffBackgroundIntensity,
@@ -38,7 +38,7 @@ export const defaultCodePreviewSettings: CodePreviewSettings = {
   syntaxHighlighting: envBoolean("CODE_PREVIEW_SYNTAX", true),
   secretWarnings: envBoolean("CODE_PREVIEW_SECRET_WARNINGS", true),
   pathIcons: envPathIconMode("CODE_PREVIEW_PATH_ICONS", "unicode"),
-  tools: [...DEFAULT_CODE_PREVIEW_TOOLS],
+  tools: [...ALL_CODE_PREVIEW_TOOLS],
 };
 
 function envTheme(name: string, fallback: string): string {

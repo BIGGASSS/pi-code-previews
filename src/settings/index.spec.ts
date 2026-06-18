@@ -130,14 +130,13 @@ test("disabled preview settings keep corresponding tool renderers enabled", () =
   assert.ok(withoutGrep.tools.includes("grep"));
 });
 
-test("default settings do not enable search/list tool previews", () => {
-  assert.deepEqual(defaultCodePreviewSettings.tools, ["bash", "read", "write", "edit"]);
-});
-
 test("individual tool toggles update configured previews", () => {
   const withoutGrep = updateSetting(defaultCodePreviewSettings, "tool:grep", "off");
-  assert.deepEqual(withoutGrep.tools, defaultCodePreviewSettings.tools);
+  assert.deepEqual(
+    withoutGrep.tools,
+    defaultCodePreviewSettings.tools.filter((tool) => tool !== "grep"),
+  );
 
   const withGrep = updateSetting(withoutGrep, "tool:grep", "on");
-  assert.deepEqual(withGrep.tools, [...defaultCodePreviewSettings.tools, "grep"]);
+  assert.deepEqual(withGrep.tools, defaultCodePreviewSettings.tools);
 });
